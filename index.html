@@ -178,192 +178,185 @@
     .filter:hover, .filter.active { border-color: var(--blue); color: var(--blue-deep); background: #eef0ff; }
 
     /* ============================================
-       3D 巡演秘密档案柜（梯形手风琴文件夹系统）
-       - 整体梯形：顶部最窄、底部最宽
-       - 每行3个文件夹等宽排列
-       - 黑色标签凸起显示 编号+城市中文
+       巡演秘密档案文件柜（2D 线稿手风琴文件夹）
+       - 参考：sam's secret files 真实办公文件夹
+       - 横向长条，3列错位，紧密叠压
+       - 梯形标签凸起（左右切角 + 中间凸起）
        ============================================ */
     .cabinet-scene {
       position: relative;
-      margin: 30px auto 60px;
+      margin: 40px auto 60px;
       padding: 0 20px;
-      max-width: 1100px;
+      max-width: 920px;
     }
     .cabinet-inner {
       position: relative;
-      padding: 0 0 80px;
+      padding: 0;
     }
-    /* 一组 = 一行 3 个文件夹 - 统一宽度 */
+    /* 一行 3 个文件夹 */
     .cabinet-row {
       position: relative;
       width: 100%;
-      height: 78px;
-      margin: -22px 0;
+      height: 48px;
+      margin: -6px 0;
       display: flex;
-      justify-content: space-between;
-      align-items: stretch;
-      gap: 12px;
+      flex-direction: row;
+      align-items: center;
+      gap: 24px;
+      z-index: 1;
     }
-    /* 单个文件夹 */
+    .cabinet-row:nth-child(odd) { transform: translateX(8px); }
+    .cabinet-row:nth-child(even) { transform: translateX(-8px); }
+    /* 单个文件夹 - 横向长条，2D 线稿 */
     .folder {
       position: relative;
       flex: 1 1 0;
       min-width: 0;
-      height: 78px;
+      height: 48px;
       cursor: pointer;
-      transition: transform .5s cubic-bezier(.22,.61,.36,1);
-      display: flex;
-      align-items: stretch;
-      background: transparent;
+      transition: transform .35s cubic-bezier(.22,.61,.36,1), z-index .2s;
+      z-index: 1;
     }
-    /* 文件夹左右两端形态 */
-    .folder-left {
-      width: 18px;
-      height: 100%;
-      position: relative;
-      background: #f0e3cc;
-      border: 1.4px solid #2b211b;
-      border-right: none;
-      border-radius: 4px 0 0 4px;
-      flex-shrink: 0;
-    }
-    .folder-left::before {
-      content: '';
+    .folder:nth-child(2) { z-index: 2; }
+    .folder:nth-child(3) { z-index: 3; }
+    /* 文件夹外框 - 米白纸张 + 细黑线 */
+    .folder-shape {
       position: absolute;
+      left: 0;
       right: 0;
       top: 0;
       bottom: 0;
-      width: 3px;
-      background: linear-gradient(90deg, rgba(43,33,27,.12), transparent);
+      background: #f5e9d4;
+      border: 1.4px solid #1a1410;
+      border-radius: 4px;
     }
-    .folder-body {
-      flex: 1;
-      min-width: 0;
-      height: 100%;
-      background: #fbf3e6;
-      border-top: 1.4px solid #2b211b;
-      border-bottom: 1.4px solid #2b211b;
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      position: relative;
-    }
-    .folder-right {
-      width: 18px;
-      height: 100%;
-      position: relative;
-      background: #f0e3cc;
-      border: 1.4px solid #2b211b;
-      border-left: none;
-      border-radius: 0 4px 4px 0;
-      flex-shrink: 0;
-    }
-    .folder-right::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: linear-gradient(270deg, rgba(43,33,27,.12), transparent);
-    }
-    /* 顶部黑色凸起标签 */
+    /* 顶部的梯形分类标签（参考图核心：中间凸起，左右切角） */
     .folder-tab {
       position: absolute;
-      top: -12px;
+      top: -14px;
       left: 50%;
       transform: translateX(-50%);
-      min-width: 130px;
-      height: 24px;
+      width: 86%;
+      max-width: 240px;
+      height: 20px;
       background: #1a1410;
-      border: 1.4px solid #1a1410;
-      border-radius: 4px 4px 0 0;
+      color: #f5e9d4;
+      /* 梯形：上窄下宽（标签像从folder顶部凸起的小卡片） */
+      clip-path: polygon(
+        18px 0%,
+        calc(100% - 18px) 0%,
+        100% 100%,
+        0% 100%
+      );
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 12px;
+      padding: 0 24px;
       font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      letter-spacing: .12em;
-      color: #f5e9d4;
-      z-index: 5;
-      box-shadow: 0 3px 6px rgba(26,20,16,.22);
+      font-size: 10.5px;
+      letter-spacing: .14em;
+      font-weight: 600;
+      z-index: 3;
       white-space: nowrap;
     }
-    .folder-tab-num {
-      font-weight: 700;
-      color: #f5e9d4;
-    }
+    .folder-tab-num { color: #f5e9d4; }
     .folder-tab-city {
       font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
       font-size: 11px;
       font-weight: 600;
       color: #f5e9d4;
       letter-spacing: .14em;
-      margin-left: 8px;
     }
-    /* hover 效果 */
-    .folder:hover { z-index: 50; transform: translateY(-3px); }
-    /* 内容区 - 默认只显示编号和城市 */
-    .folder-content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 0;
-      width: 100%;
-      pointer-events: none;
+    /* hover 效果 - folder 整体上提 + 加深 */
+    .folder:hover .folder-shape {
+      background: #efe0c4;
     }
-    .folder-no {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: #2b211b;
-      letter-spacing: .04em;
-      flex-shrink: 0;
+    .folder:hover { z-index: 50; }
+    .folder:hover .folder-tab {
+      background: #4a2d1a;
     }
-    .folder-city {
-      font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      color: #2b211b;
-      letter-spacing: .18em;
-      margin-left: 12px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .folder-date, .folder-venue, .folder-session { display: none; }
-
-    /* 底座 */
-    .cabinet-base {
-      margin: 60px auto 0;
-      max-width: 920px;
-      width: 92%;
-      position: relative;
-    }
-    .cabinet-base::before {
+    /* 文件夹主体 - 折叠线 */
+    .folder-shape::before {
       content: '';
-      display: block;
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 1px;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(26, 20, 16, 0.18) 0,
+        rgba(26, 20, 16, 0.18) 4px,
+        transparent 4px,
+        transparent 8px
+      );
+    }
+
+    /* ============================================
+       底部手风琴文件夹底板（参考图）
+       - 横向托板 + 黄色 "sam's secret files" 风格标签
+       ============================================ */
+    .cabinet-base {
+      position: relative;
+      margin: 60px auto 0;
+      max-width: 880px;
+      width: 92%;
+      height: 70px;
+    }
+    .cabinet-base-tray {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 14px;
       height: 56px;
-      background: #f0e3cc;
-      border: 1.4px solid #2b211b;
+      background: #f5e9d4;
+      border: 1.4px solid #1a1410;
       border-radius: 4px;
     }
+    .cabinet-base-tray::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 14px;
+      height: 1px;
+      background: rgba(26,20,16,.18);
+    }
+    .cabinet-base-tray::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 14px;
+      height: 1px;
+      background: rgba(26,20,16,.18);
+    }
+    .cabinet-base-side {
+      position: absolute;
+      top: 0;
+      width: 14px;
+      height: 70px;
+      background: #f5e9d4;
+      border: 1.4px solid #1a1410;
+    }
+    .cabinet-base-side.left { left: -20px; border-right: none; border-radius: 4px 0 0 4px; }
+    .cabinet-base-side.right { right: -20px; border-left: none; border-radius: 0 4px 4px 0; }
     .cabinet-label {
       position: absolute;
       left: 50%;
-      top: 16px;
+      top: 0;
       transform: translateX(-50%);
       background: #f5d96a;
       color: #1a1410;
-      padding: 6px 22px;
-      border-radius: 4px;
+      padding: 5px 18px;
+      border: 1.4px solid #1a1410;
+      border-radius: 3px;
       font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: .14em;
-      border: 1.4px solid #1a1410;
+      z-index: 4;
       white-space: nowrap;
     }
 
@@ -969,29 +962,9 @@
       for (let i = 0; i < toursToShow.length; i += pageSize) {
         rows.push(toursToShow.slice(i, i + pageSize));
       }
-      const totalRows = rows.length;
-      // 梯形：顶部row窄(40%)、底部row宽(100%)
-      // 顶部 1-2 行窄，中间正常，底部接近 100%
       cabinet.innerHTML = rows.map((rowTours, rowIdx) => {
-        // 计算每行的宽度比例（梯形）
-        // 第 1-3 行：40% / 55% / 70%
-        // 4-10 行：逐渐到 100%
-        let widthPct;
-        if (totalRows <= 5) {
-          widthPct = 40 + rowIdx * (60 / Math.max(1, totalRows - 1));
-        } else {
-          // 前3行40-65%, 中间线性增长, 最后保持100%
-          if (rowIdx < 3) {
-            widthPct = 40 + rowIdx * 8;
-          } else if (rowIdx > totalRows - 3) {
-            widthPct = 100;
-          } else {
-            const t = (rowIdx - 3) / (totalRows - 6);
-            widthPct = 64 + t * 36;
-          }
-        }
         return `
-        <div class="cabinet-row" style="width: ${widthPct}%; margin-left: auto; margin-right: auto;">
+        <div class="cabinet-row">
           ${rowTours.map((tour, idx) => {
             const id = String(tour.id).padStart(3, '0');
             return `
@@ -1000,14 +973,7 @@
                 <span class="folder-tab-num">${id}</span>
                 <span class="folder-tab-city">${tour.city}</span>
               </div>
-              <div class="folder-left"></div>
-              <div class="folder-body">
-                <div class="folder-content">
-                  <span class="folder-no">${id}</span>
-                  <span class="folder-city">${tour.city}</span>
-                </div>
-              </div>
-              <div class="folder-right"></div>
+              <div class="folder-shape"></div>
             </div>`;
           }).join('')}
         </div>`;
