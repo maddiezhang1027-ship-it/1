@@ -178,51 +178,54 @@
     .filter:hover, .filter.active { border-color: var(--blue); color: var(--blue-deep); background: #eef0ff; }
 
     /* ============================================
-       3D 巡演秘密档案柜（手风琴文件夹）
-       - 上窄下宽，远处小近处大
-       - 每层3个文件夹横向错位叠放
+       3D 巡演秘密档案柜（梯形手风琴文件夹系统）
+       - 整体梯形：顶部最窄、底部最宽
+       - 每行3个文件夹等宽排列
        - 黑色标签凸起显示 编号+城市中文
        ============================================ */
     .cabinet-scene {
       position: relative;
-      perspective: 1600px;
-      perspective-origin: 50% 0%;
       margin: 30px auto 60px;
       padding: 0 20px;
       max-width: 1100px;
     }
     .cabinet-inner {
       position: relative;
-      transform-style: preserve-3d;
       padding: 0 0 80px;
     }
-    /* 一组 = 一层 3 个文件夹 */
+    /* 一组 = 一行 3 个文件夹 - 统一宽度 */
     .cabinet-row {
       position: relative;
       width: 100%;
-      height: 120px;
-      margin: -32px 0;
-      transform-style: preserve-3d;
+      height: 78px;
+      margin: -22px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 12px;
     }
     /* 单个文件夹 */
     .folder {
-      position: absolute;
-      height: 120px;
+      position: relative;
+      flex: 1 1 0;
+      min-width: 0;
+      height: 78px;
       cursor: pointer;
-      transition: transform .6s cubic-bezier(.22,.61,.36,1);
+      transition: transform .5s cubic-bezier(.22,.61,.36,1);
       display: flex;
       align-items: stretch;
       background: transparent;
     }
     /* 文件夹左右两端形态 */
     .folder-left {
-      width: 28px;
+      width: 18px;
       height: 100%;
       position: relative;
       background: #f0e3cc;
       border: 1.4px solid #2b211b;
       border-right: none;
       border-radius: 4px 0 0 4px;
+      flex-shrink: 0;
     }
     .folder-left::before {
       content: '';
@@ -230,28 +233,30 @@
       right: 0;
       top: 0;
       bottom: 0;
-      width: 4px;
+      width: 3px;
       background: linear-gradient(90deg, rgba(43,33,27,.12), transparent);
     }
     .folder-body {
       flex: 1;
+      min-width: 0;
       height: 100%;
       background: #fbf3e6;
       border-top: 1.4px solid #2b211b;
       border-bottom: 1.4px solid #2b211b;
       display: flex;
       align-items: center;
-      padding: 0 32px;
+      padding: 0 20px;
       position: relative;
     }
     .folder-right {
-      width: 28px;
+      width: 18px;
       height: 100%;
       position: relative;
       background: #f0e3cc;
       border: 1.4px solid #2b211b;
       border-left: none;
       border-radius: 0 4px 4px 0;
+      flex-shrink: 0;
     }
     .folder-right::before {
       content: '';
@@ -259,35 +264,31 @@
       left: 0;
       top: 0;
       bottom: 0;
-      width: 4px;
+      width: 3px;
       background: linear-gradient(270deg, rgba(43,33,27,.12), transparent);
     }
     /* 顶部黑色凸起标签 */
     .folder-tab {
       position: absolute;
-      top: -14px;
+      top: -12px;
       left: 50%;
       transform: translateX(-50%);
-      min-width: 150px;
-      height: 28px;
+      min-width: 130px;
+      height: 24px;
       background: #1a1410;
       border: 1.4px solid #1a1410;
       border-radius: 4px 4px 0 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 14px;
+      padding: 0 12px;
       font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
       font-size: 11px;
       letter-spacing: .12em;
       color: #f5e9d4;
       z-index: 5;
-      box-shadow: 0 4px 8px rgba(26,20,16,.25);
-    }
-    .folder-tab-letter {
-      font-weight: 700;
-      color: #f5d96a;
-      min-width: 16px;
+      box-shadow: 0 3px 6px rgba(26,20,16,.22);
+      white-space: nowrap;
     }
     .folder-tab-num {
       font-weight: 700;
@@ -301,39 +302,8 @@
       letter-spacing: .14em;
       margin-left: 8px;
     }
-    /* 文件夹之间的前后叠压 */
-    .folder.z-top { z-index: 5; }
-    .folder.z-mid { z-index: 3; }
-    .folder.z-bot { z-index: 1; }
-    /* 三列定位 + 远近透视 */
-    .col-left {
-      left: 0;
-      width: 32%;
-      transform-origin: left center;
-    }
-    .col-center {
-      left: 34%;
-      width: 32%;
-      transform-origin: center center;
-    }
-    .col-right {
-      left: 68%;
-      width: 32%;
-      transform-origin: right center;
-    }
-    /* 透视行：上小下大 */
-    .cabinet-row {
-      transform-origin: 50% 0%;
-    }
-    .cabinet-row.persp-far { transform: scale(0.7); opacity: .6; margin-bottom: 24px; }
-    .cabinet-row.persp-mid { transform: scale(0.85); opacity: .85; margin-bottom: 18px; }
-    .cabinet-row.persp-near { transform: scale(1); margin-bottom: 12px; }
-    .cabinet-row.persp-front { transform: scale(1.12); margin-bottom: 18px; }
-    /* hover 效果：文件夹略向前 */
-    .folder:hover { z-index: 50 !important; }
-    .folder:hover.col-left { transform: translateX(6px); }
-    .folder:hover.col-right { transform: translateX(-6px); }
-    .folder:hover.col-center { transform: translateY(-2px); }
+    /* hover 效果 */
+    .folder:hover { z-index: 50; transform: translateY(-3px); }
     /* 内容区 - 默认只显示编号和城市 */
     .folder-content {
       position: relative;
@@ -346,19 +316,22 @@
     }
     .folder-no {
       font-family: 'Playfair Display', serif;
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 700;
       color: #2b211b;
       letter-spacing: .04em;
-      min-width: 64px;
+      flex-shrink: 0;
     }
     .folder-city {
       font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       color: #2b211b;
       letter-spacing: .18em;
       margin-left: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .folder-date, .folder-venue, .folder-session { display: none; }
 
@@ -414,12 +387,12 @@
       opacity: 1;
     }
     .modal-ticket {
-      width: 480px;
+      width: 760px;
       max-width: 92vw;
       background: #fbf3e6;
       border: 1.4px solid #2b211b;
       border-radius: 4px;
-      padding: 32px 40px;
+      padding: 22px 32px;
       position: relative;
       font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
       color: #2b211b;
@@ -431,10 +404,10 @@
     }
     .modal-close {
       position: absolute;
-      top: 14px;
-      right: 18px;
-      width: 28px;
-      height: 28px;
+      top: 12px;
+      right: 16px;
+      width: 26px;
+      height: 26px;
       background: transparent;
       border: 1.4px solid #2b211b;
       border-radius: 50%;
@@ -451,99 +424,92 @@
       background: #2b211b;
       color: #fbf3e6;
     }
-    .modal-headline {
-      display: flex;
-      align-items: baseline;
-      gap: 18px;
-      margin-bottom: 20px;
-      padding-bottom: 16px;
-      border-bottom: 1.4px solid #2b211b;
+    .modal-row {
+      display: grid;
+      grid-template-columns: 90px 1.1fr 1.1fr 2fr auto;
+      align-items: center;
+      gap: 24px;
     }
-    .modal-headline .label {
-      font-size: 10px;
+    .modal-left {
+      border-right: 1.4px solid #2b211b;
+      padding-right: 18px;
+    }
+    .modal-label {
+      font-size: 9px;
       letter-spacing: .22em;
       color: #b94545;
       font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .modal-no {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: #2b211b;
+      letter-spacing: .04em;
       line-height: 1;
     }
-    .modal-headline .no {
-      font-family: 'Playfair Display', serif;
-      font-size: 36px;
-      font-weight: 700;
-      color: #2b211b;
-      letter-spacing: .04em;
-    }
-    .modal-tour-row {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .modal-tour {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: #2b211b;
-      letter-spacing: .14em;
-    }
-    .modal-detail-list {
-      display: flex;
-      flex-direction: column;
-    }
-    .modal-detail-row {
-      display: flex;
-      align-items: baseline;
-      gap: 18px;
-      padding: 14px 0;
-      border-bottom: 1px dashed rgba(43,33,27,.25);
-    }
-    .modal-detail-row:last-child {
-      border-bottom: none;
-    }
-    .modal-detail-row .key {
-      font-size: 10px;
-      letter-spacing: .2em;
+    .modal-key {
+      font-size: 9px;
+      letter-spacing: .22em;
       color: #b94545;
       font-weight: 700;
-      min-width: 64px;
+      margin-bottom: 4px;
     }
-    .modal-detail-row .val {
-      font-size: 18px;
+    .modal-val {
+      font-size: 16px;
       font-weight: 600;
       color: #2b211b;
       letter-spacing: .04em;
+      line-height: 1.2;
     }
-    .modal-detail-row .val.zh {
+    .modal-val.zh {
       font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
-      font-size: 20px;
+      font-size: 17px;
       font-weight: 600;
     }
-    .modal-detail-row .val-date {
+    .modal-val-session {
+      font-family: 'PingFang SC', sans-serif;
+      font-size: 11px;
+      color: #b94545;
+      font-weight: 600;
+      letter-spacing: .14em;
+      margin-top: 2px;
+    }
+    .modal-val-date {
       font-family: 'Playfair Display', serif;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 700;
       color: #2b211b;
       letter-spacing: .04em;
+      line-height: 1;
+    }
+    .modal-val-venue {
+      font-family: 'PingFang SC', sans-serif;
+      font-size: 13px;
+      color: #2b211b;
+      font-weight: 600;
     }
     .modal-status {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      border: 1.6px solid #b94545;
+      gap: 6px;
+      padding: 5px 12px;
+      border: 1.4px solid #b94545;
       border-radius: 40px;
       color: #b94545;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: .18em;
+      letter-spacing: .16em;
+      white-space: nowrap;
     }
     .modal-status.upcoming {
       border-color: #4a7c59;
       color: #4a7c59;
     }
     .modal-status-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: #b94545;
     }
@@ -552,18 +518,17 @@
     }
 
     @media (max-width: 900px) {
-      .cabinet-row { height: 100px; margin: -22px 0; }
-      .folder { height: 100px; }
-      .folder-left, .folder-right { width: 22px; }
-      .folder-body { padding: 0 18px; }
-      .folder-tab { min-width: 120px; height: 24px; font-size: 10px; padding: 0 10px; }
-      .folder-no { font-size: 20px; min-width: 50px; }
-      .folder-city { font-size: 13px; }
-      .modal-ticket { padding: 24px 22px; }
-      .modal-headline .no { font-size: 26px; }
-      .modal-detail-row .val { font-size: 15px; }
-      .modal-detail-row .val.zh { font-size: 16px; }
-      .modal-detail-row .val-date { font-size: 20px; }
+      .cabinet-row { height: 64px; margin: -16px 0; gap: 8px; }
+      .folder { height: 64px; }
+      .folder-left, .folder-right { width: 14px; }
+      .folder-body { padding: 0 12px; }
+      .folder-tab { min-width: 100px; height: 22px; font-size: 10px; padding: 0 8px; }
+      .folder-tab-city { font-size: 10px; }
+      .folder-no { font-size: 16px; }
+      .folder-city { font-size: 12px; margin-left: 8px; letter-spacing: .12em; }
+      .modal-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .modal-left { grid-column: 1 / -1; border-right: none; border-bottom: 1.4px solid #2b211b; padding-right: 0; padding-bottom: 10px; }
+      .modal-ticket { padding: 18px 20px; }
     }
 
         .tour-list { display: grid; gap: 10px; }
@@ -1001,27 +966,36 @@
     function renderCabinet(toursToShow) {
       const pageSize = 3;
       const rows = [];
-      // 每 3 个一组
       for (let i = 0; i < toursToShow.length; i += pageSize) {
         rows.push(toursToShow.slice(i, i + pageSize));
       }
-      // 透视层级循环 - 让档案柜从远到近循环
-      const perspCycle = ['persp-far', 'persp-mid', 'persp-near', 'persp-front'];
+      const totalRows = rows.length;
+      // 梯形：顶部row窄(40%)、底部row宽(100%)
+      // 顶部 1-2 行窄，中间正常，底部接近 100%
       cabinet.innerHTML = rows.map((rowTours, rowIdx) => {
-        const persp = perspCycle[rowIdx % 4];
-        // 每行内部3个：左/中/右
-        const colPatterns = [
-          { col: 'col-left',   z: 'z-bot' },
-          { col: 'col-center', z: 'z-top' },
-          { col: 'col-right',  z: 'z-mid' },
-        ];
+        // 计算每行的宽度比例（梯形）
+        // 第 1-3 行：40% / 55% / 70%
+        // 4-10 行：逐渐到 100%
+        let widthPct;
+        if (totalRows <= 5) {
+          widthPct = 40 + rowIdx * (60 / Math.max(1, totalRows - 1));
+        } else {
+          // 前3行40-65%, 中间线性增长, 最后保持100%
+          if (rowIdx < 3) {
+            widthPct = 40 + rowIdx * 8;
+          } else if (rowIdx > totalRows - 3) {
+            widthPct = 100;
+          } else {
+            const t = (rowIdx - 3) / (totalRows - 6);
+            widthPct = 64 + t * 36;
+          }
+        }
         return `
-        <div class="cabinet-row ${persp}">
+        <div class="cabinet-row" style="width: ${widthPct}%; margin-left: auto; margin-right: auto;">
           ${rowTours.map((tour, idx) => {
-            const pattern = colPatterns[idx % 3];
             const id = String(tour.id).padStart(3, '0');
             return `
-            <div class="folder ${pattern.col} ${pattern.z} ${tour.status}" data-id="${tour.id}">
+            <div class="folder ${tour.status}" data-id="${tour.id}">
               <div class="folder-tab">
                 <span class="folder-tab-num">${id}</span>
                 <span class="folder-tab-city">${tour.city}</span>
@@ -1058,33 +1032,28 @@
       const html = `
         <div class="modal-ticket">
           <button class="modal-close" onclick="closeTicketModal()">×</button>
-          <div class="modal-headline">
+          <div class="modal-row">
+            <div class="modal-left">
+              <div class="modal-label">TOUR STOP</div>
+              <div class="modal-no">NO.${id}</div>
+            </div>
             <div>
-              <div class="label">TOUR STOP</div>
-              <div class="no">NO.${id}</div>
+              <div class="modal-key">场次编号</div>
+              <div class="modal-val zh">${tour.city}</div>
+              <div class="modal-val-session">${tour.session}</div>
             </div>
-          </div>
-          <div class="modal-tour-row">
-            <span class="modal-tour">KATRINA TANG · TREAT TOUR</span>
-          </div>
-          <div class="modal-detail-list">
-            <div class="modal-detail-row">
-              <span class="key">CITY</span>
-              <span class="val zh">${tour.city} · ${tour.session}</span>
+            <div>
+              <div class="modal-key">日期</div>
+              <div class="modal-val-date">${day} / ${month}</div>
             </div>
-            <div class="modal-detail-row">
-              <span class="key">DATE</span>
-              <span class="val-date">${day} / ${month}</span>
+            <div>
+              <div class="modal-key">Venue</div>
+              <div class="modal-val-venue">${tour.venue}</div>
             </div>
-            <div class="modal-detail-row">
-              <span class="key">VENUE</span>
-              <span class="val zh">${tour.venue}</span>
-            </div>
-            <div class="modal-detail-row">
-              <span class="key">STATUS</span>
+            <div>
               <span class="modal-status ${isUpcoming ? 'upcoming' : ''}">
                 <span class="modal-status-dot"></span>
-                ${isUpcoming ? 'UPCOMING · 待演' : 'ARCHIVED · 已结束'}
+                ${isUpcoming ? 'UPCOMING 待演' : 'ARCHIVED 已结束'}
               </span>
             </div>
           </div>
