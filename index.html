@@ -178,219 +178,244 @@
     .filter:hover, .filter.active { border-color: var(--blue); color: var(--blue-deep); background: #eef0ff; }
 
     /* ============================================
-       巡演秘密档案文件柜（手风琴文件夹 / 布达佩斯大饭店）
-       - 横向纸页 + 不规则梯形外形（左短右长）
-       - 顶部矩形页签（左右切角）
-       - 3列错位叠压
+       巡演秘密档案 - 单一手风琴文件夹
+       - 1 个完整立体文件夹，内含 121 张纸页
+       - 顶部封盖 + 121 纸页（3 列错位） + 底部底板
+       - 布达佩斯大饭店配色
        ============================================ */
     .cabinet-scene {
       position: relative;
-      margin: 40px auto 60px;
+      margin: 50px auto 60px;
       padding: 0 20px;
-      max-width: 920px;
+      max-width: 960px;
     }
-    .cabinet-inner {
+    /* 整个手风琴文件夹 = 一个外框 */
+    .accordion-file {
       position: relative;
-      padding: 0 60px;
+      background: #f3d9b8;
+      border: 1.6px solid #1a1410;
+      border-radius: 6px;
+      padding: 0;
+      overflow: visible;
     }
-    /* 一行 3 个文件夹 */
-    .cabinet-row {
+    /* 顶部封盖 - 黄色标题 + 暗色外皮 */
+    .accordion-top {
+      position: relative;
+      background: #1a1410;
+      border-bottom: 1.6px solid #1a1410;
+      padding: 18px 28px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 6px 6px 0 0;
+    }
+    .accordion-top::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 8px;
+      height: 1px;
+      background: rgba(245, 217, 106, 0.4);
+    }
+    .accordion-top::after {
+      content: '';
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 8px;
+      height: 1px;
+      background: rgba(245, 217, 106, 0.4);
+    }
+    .accordion-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #f5d96a;
+      letter-spacing: .14em;
+    }
+    .accordion-sub {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      color: #f5e9d4;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+    .accordion-meta {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      color: #f5e9d4;
+      letter-spacing: .14em;
+      text-align: right;
+    }
+    .accordion-meta-num {
+      color: #f5d96a;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    /* 内部纸页区 - 容纳 121 张纸，3 列 */
+    .accordion-pages {
+      position: relative;
+      padding: 18px 16px 14px;
+      background: repeating-linear-gradient(
+        180deg,
+        transparent 0,
+        transparent 5px,
+        rgba(26, 20, 16, 0.04) 5px,
+        rgba(26, 20, 16, 0.04) 6px
+      );
+    }
+    /* 一行 3 张纸 */
+    .acc-row {
       position: relative;
       width: 100%;
-      height: 52px;
+      height: 50px;
       margin: 0;
-      margin-bottom: -4px;
+      margin-bottom: -3px;
       display: flex;
       flex-direction: row;
       align-items: stretch;
       gap: 0;
       z-index: 1;
     }
-
-    /* 单个文件夹：横向长条，2D 线稿 */
-    .folder {
+    /* 单张纸页 */
+    .acc-page {
       position: relative;
       flex: 1 1 0;
       min-width: 0;
-      height: 52px;
+      height: 50px;
       cursor: pointer;
       transition: transform .35s cubic-bezier(.22,.61,.36,1), z-index .2s;
       z-index: 1;
     }
-    /* 错位：左folder向左推，中间不动，右folder向右推 */
-    .folder:nth-child(1) { transform: translateX(-18px); z-index: 2; }
-    .folder:nth-child(2) { transform: translateX(0px); z-index: 3; }
-    .folder:nth-child(3) { transform: translateX(18px); z-index: 2; }
+    /* 错位：左 -18px / 中 0 / 右 +18px */
+    .acc-page:nth-child(1) { transform: translateX(-22px); z-index: 2; }
+    .acc-page:nth-child(2) { transform: translateX(0px); z-index: 3; }
+    .acc-page:nth-child(3) { transform: translateX(22px); z-index: 2; }
 
-    /* 文件夹外框 - 不规则梯形（左短右长，像手风琴纸） */
-    .folder-shape {
+    /* 纸页主体 - 不规则梯形（左短右长） */
+    .acc-page-shape {
       position: absolute;
       left: 0;
       right: 0;
       top: 0;
       bottom: 0;
-      background: #f3d9b8;
-      border: 1.4px solid #1a1410;
-      /* 不规则梯形：左上 + 左下 大切角（像手风琴纸边缘） */
+      background: #fbedd6;
+      border: 1.3px solid #1a1410;
       clip-path: polygon(
-        16px 0%,
+        14px 0%,
         100% 0%,
         100% 100%,
         0% 100%,
-        0% 14px
+        0% 12px
       );
     }
-    /* 第二层加深 - 营造多张纸叠加感 */
-    .folder-shape::before {
+    /* 第二层加深 - 纸层叠 */
+    .acc-page-shape::before {
       content: '';
       position: absolute;
       inset: 0;
       background: #f7e3c5;
       clip-path: polygon(
         0% 0%,
-        calc(100% - 6px) 0%,
-        calc(100% - 6px) 100%,
+        calc(100% - 5px) 0%,
+        calc(100% - 5px) 100%,
         0% 100%
       );
       z-index: 1;
     }
-    .folder-shape::after {
+    .acc-page-shape::after {
       content: '';
       position: absolute;
-      left: 6px;
-      right: 12px;
-      top: 6px;
+      left: 5px;
+      right: 10px;
+      top: 5px;
       bottom: 0;
-      background: #fbedd6;
-      border-top: 1px solid rgba(26, 20, 16, 0.18);
+      background: #fcf3e2;
+      border-top: 1px solid rgba(26, 20, 16, 0.15);
       z-index: 2;
     }
 
-    /* 顶部的矩形页签（左右切角） */
-    .folder-tab {
+    /* 顶部页签 */
+    .acc-page-tab {
       position: absolute;
-      top: -10px;
+      top: -9px;
       left: 50%;
       transform: translateX(-50%);
-      width: 78%;
+      width: 80%;
       max-width: 200px;
-      height: 18px;
+      height: 17px;
       background: #1a1410;
       color: #f5e9d4;
-      /* 矩形页签：左右下切角（中间略凸） */
       clip-path: polygon(
-        6px 0%,
+        5px 0%,
         100% 0%,
-        calc(100% - 6px) 100%,
+        calc(100% - 5px) 100%,
         0% 100%
       );
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 14px;
       font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
-      font-size: 10px;
+      font-size: 9.5px;
       letter-spacing: .14em;
       font-weight: 600;
-      z-index: 4;
+      z-index: 5;
       white-space: nowrap;
     }
-    .folder-tab-num { color: #f5d96a; }
-    .folder-tab-city {
+    .acc-page-tab-num { color: #f5d96a; }
+    .acc-page-tab-city {
       font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 600;
       color: #f5e9d4;
       letter-spacing: .16em;
     }
+    /* 纸页悬停态 */
+    .acc-page:hover { z-index: 50 !important; }
+    .acc-page:hover .acc-page-shape::after { background: #fff7e6; }
+    .acc-page:hover .acc-page-tab { background: #4a2d1a; }
+    .acc-page:hover .acc-page-tab-num { color: #fce5a0; }
 
-    /* hover 效果 */
-    .folder:hover { z-index: 50; }
-    .folder:hover .folder-shape::after { background: #f9e6c8; }
-    .folder:hover .folder-tab { background: #4a2d1a; }
-    .folder:hover .folder-tab-num { color: #fce5a0; }
-
-    /* 文件夹主体上的纸张纹理 - 左侧对齐的细线 */
-    .folder-content {
-      position: absolute;
-      inset: 6px 12px 6px 16px;
-      z-index: 3;
-      pointer-events: none;
+    /* 底部底板 - 与顶盖同款深色 */
+    .accordion-bottom {
+      position: relative;
+      background: #1a1410;
+      border-top: 1.6px solid #1a1410;
+      padding: 14px 28px 18px;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: space-between;
+      border-radius: 0 0 6px 6px;
+    }
+    .accordion-bottom::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 8px;
+      height: 1px;
+      background: rgba(245, 217, 106, 0.4);
+    }
+    .accordion-bottom::after {
+      content: '';
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 8px;
+      height: 1px;
+      background: rgba(245, 217, 106, 0.4);
+    }
+    .accordion-foot {
       font-family: 'Courier Prime', monospace;
-      font-size: 8px;
-      color: rgba(26, 20, 16, 0.25);
-      letter-spacing: .2em;
+      font-size: 10px;
+      color: #f5e9d4;
+      letter-spacing: .22em;
+      text-transform: uppercase;
     }
-
-    /* ============================================
-       底部手风琴文件夹底板（参考图）
-       - 横向托板 + 黄色 "sam's secret files" 风格标签
-       ============================================ */
-    .cabinet-base {
-      position: relative;
-      margin: 60px auto 0;
-      max-width: 880px;
-      width: 92%;
-      height: 70px;
-    }
-    .cabinet-base-tray {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 14px;
-      height: 56px;
-      background: #f3d9b8;
-      border: 1.4px solid #1a1410;
-      border-radius: 4px;
-    }
-    .cabinet-base-tray::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 14px;
-      height: 1px;
-      background: rgba(26,20,16,.2);
-    }
-    .cabinet-base-tray::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 14px;
-      height: 1px;
-      background: rgba(26,20,16,.2);
-    }
-    .cabinet-base-side {
-      position: absolute;
-      top: 0;
-      width: 14px;
-      height: 70px;
-      background: #f3d9b8;
-      border: 1.4px solid #1a1410;
-    }
-    .cabinet-base-side.left { left: -20px; border-right: none; border-radius: 4px 0 0 4px; }
-    .cabinet-base-side.right { right: -20px; border-left: none; border-radius: 0 4px 4px 0; }
-    .cabinet-label {
-      position: absolute;
-      left: 50%;
-      top: -1px;
-      transform: translateX(-50%);
-      background: #f5d96a;
-      color: #1a1410;
-      padding: 4px 18px;
-      border: 1.4px solid #1a1410;
-      border-radius: 3px;
-      font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: .14em;
-      z-index: 4;
-      white-space: nowrap;
-    }
+    .accordion-foot-key { color: #f5d96a; font-weight: 700; }
 
     /* ============================================
        票根弹窗 (图2风格)
@@ -543,14 +568,13 @@
     }
 
     @media (max-width: 900px) {
-      .cabinet-row { height: 64px; margin: -16px 0; gap: 8px; }
-      .folder { height: 64px; }
-      .folder-left, .folder-right { width: 14px; }
-      .folder-body { padding: 0 12px; }
-      .folder-tab { min-width: 100px; height: 22px; font-size: 10px; padding: 0 8px; }
-      .folder-tab-city { font-size: 10px; }
-      .folder-no { font-size: 16px; }
-      .folder-city { font-size: 12px; margin-left: 8px; letter-spacing: .12em; }
+      .acc-row { height: 42px; margin-bottom: -2px; }
+      .acc-page { height: 42px; }
+      .acc-page:nth-child(1) { transform: translateX(-12px); }
+      .acc-page:nth-child(3) { transform: translateX(12px); }
+      .accordion-top { padding: 14px 18px 10px; }
+      .accordion-title { font-size: 14px; }
+      .accordion-bottom { padding: 10px 18px 14px; }
       .modal-row { grid-template-columns: 1fr 1fr; gap: 12px; }
       .modal-left { grid-column: 1 / -1; border-right: none; border-bottom: 1.4px solid #2b211b; padding-right: 0; padding-bottom: 10px; }
       .modal-ticket { padding: 18px 20px; }
@@ -801,9 +825,22 @@
           </div>
           <div class="filters" role="group" aria-label="筛选巡演状态"><button class="filter active" data-filter="all">全部</button><button class="filter" data-filter="upcoming">待演</button><button class="filter" data-filter="archived">已结束</button></div>
           <div class="cabinet-scene">
-            <div class="cabinet-inner" id="cabinet"></div>
-            <div class="cabinet-base">
-              <span class="cabinet-label">KATRINA TANG · TREAT TOUR ARCHIVE</span>
+            <div class="accordion-file" id="cabinet">
+              <div class="accordion-top">
+                <div>
+                  <div class="accordion-title">KATRINA TANG · TREAT TOUR</div>
+                  <div class="accordion-sub">SECRET ARCHIVE · 121 STOPS</div>
+                </div>
+                <div class="accordion-meta">
+                  <div><span class="accordion-meta-num">121</span> SHOWS</div>
+                  <div>EST. 2026</div>
+                </div>
+              </div>
+              <div class="accordion-pages" id="cabinet-pages"></div>
+              <div class="accordion-bottom">
+                <span class="accordion-foot"><span class="accordion-foot-key">SECRET</span> · CONFIDENTIAL</span>
+                <span class="accordion-foot">FILE NO. <span class="accordion-foot-key">001-121</span></span>
+              </div>
             </div>
           </div>
           <div class="empty" id="empty-state">这一页暂时没有符合条件的场次。</div>
@@ -994,27 +1031,30 @@
       for (let i = 0; i < toursToShow.length; i += pageSize) {
         rows.push(toursToShow.slice(i, i + pageSize));
       }
-      cabinet.innerHTML = rows.map((rowTours, rowIdx) => {
+      // 渲染到 #cabinet-pages 内部（不覆盖顶部封盖和底部底板）
+      const pagesEl = document.getElementById('cabinet-pages');
+      if (!pagesEl) return;
+      pagesEl.innerHTML = rows.map((rowTours) => {
         return `
-        <div class="cabinet-row">
-          ${rowTours.map((tour, idx) => {
+        <div class="acc-row">
+          ${rowTours.map((tour) => {
             const id = String(tour.id).padStart(3, '0');
             return `
-            <div class="folder ${tour.status}" data-id="${tour.id}">
-              <div class="folder-tab">
-                <span class="folder-tab-num">${id}</span>
-                <span class="folder-tab-city">${tour.city}</span>
+            <div class="acc-page ${tour.status}" data-id="${tour.id}">
+              <div class="acc-page-tab">
+                <span class="acc-page-tab-num">${id}</span>
+                <span class="acc-page-tab-city">${tour.city}</span>
               </div>
-              <div class="folder-shape"></div>
+              <div class="acc-page-shape"></div>
             </div>`;
           }).join('')}
         </div>`;
       }).join('');
 
-      cabinet.querySelectorAll('.folder').forEach(folder => {
-        folder.addEventListener('click', e => {
+      pagesEl.querySelectorAll('.acc-page').forEach(page => {
+        page.addEventListener('click', e => {
           e.stopPropagation();
-          const id = Number(folder.dataset.id);
+          const id = Number(page.dataset.id);
           const tour = toursToShow.find(t => t.id === id);
           if (!tour) return;
           openTicketModal(tour);
