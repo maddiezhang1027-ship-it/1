@@ -509,6 +509,7 @@
       letter-spacing: .04em;
       line-height: 1.1;
       margin-bottom: 6px;
+      white-space: nowrap;
     }
     /* 场次按钮 */
     .modal-session {
@@ -539,11 +540,12 @@
     /* 日期 */
     .modal-date {
       font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      font-weight: 700;
+      font-size: 26px;
+      font-weight: 600;
       color: #2b211b;
       letter-spacing: .04em;
       line-height: 1;
+      white-space: nowrap;
     }
     /* Venue */
     .modal-venue {
@@ -552,6 +554,7 @@
       font-weight: 600;
       color: #2b211b;
       line-height: 1.4;
+      white-space: nowrap;
     }
 
     /* 撕痕分隔 - 票根打孔孔 */
@@ -1229,7 +1232,7 @@
               </div>
               <div>
                 <div class="modal-col-label">DATE</div>
-                <div class="modal-date">${day} / ${month}</div>
+                <div class="modal-date">${month} · ${day}</div>
               </div>
               <div>
                 <div class="modal-col-label">VENUE</div>
