@@ -36,3 +36,4 @@ build/
 # Cache
 .cache/
 .parcel-cache/
+__test_open.png
