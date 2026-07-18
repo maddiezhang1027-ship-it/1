@@ -416,7 +416,7 @@
     .accordion-foot-key { color: var(--pink); font-weight: 700; }
 
     /* ============================================
-       票根弹窗 (图2风格)
+       票根弹窗 (Ticket 风格 + 艺术设计)
        ============================================ */
     .modal-backdrop {
       position: fixed;
@@ -428,141 +428,249 @@
       align-items: center;
       justify-content: center;
       opacity: 0;
-      transition: opacity .4s;
+      transition: opacity .3s ease;
     }
     .modal-backdrop.show {
       display: flex;
       opacity: 1;
     }
+    /* 票根整体 - 米白 + 深棕细线 + 圆角 */
     .modal-ticket {
-      width: 760px;
+      width: 820px;
       max-width: 92vw;
       background: #fbf3e6;
       border: 1.4px solid #2b211b;
       border-radius: 4px;
-      padding: 22px 32px;
+      padding: 0;
       position: relative;
+      color: #2b211b;
       font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
-      color: #2b211b;
-      transform: translateY(20px) scale(0.96);
-      transition: transform .5s cubic-bezier(.22,.61,.36,1);
-    }
-    .modal-backdrop.show .modal-ticket {
-      transform: translateY(0) scale(1);
-    }
-    .modal-close {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      width: 26px;
-      height: 26px;
-      background: transparent;
-      border: 1.4px solid #2b211b;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      line-height: 1;
-      color: #2b211b;
-      transition: all .2s;
-    }
-    .modal-close:hover {
-      background: #2b211b;
-      color: #fbf3e6;
-    }
-    .modal-row {
+      box-shadow: 0 24px 60px rgba(43, 33, 27, 0.22), 0 6px 18px rgba(43, 33, 27, 0.12);
       display: grid;
-      grid-template-columns: 90px 1.1fr 1.1fr 2fr auto;
-      align-items: center;
-      gap: 24px;
+      grid-template-columns: 1fr 16px 130px;
+      overflow: visible;
     }
-    .modal-left {
-      border-right: 1.4px solid #2b211b;
+    /* 左侧票根主体 */
+    .modal-main {
+      padding: 22px 30px;
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 22px;
+      align-items: center;
+    }
+    /* 编号区 */
+    .modal-id {
+      text-align: left;
+      border-right: 1.4px dashed #b94545;
       padding-right: 18px;
     }
-    .modal-label {
+    .modal-id-label {
       font-size: 9px;
-      letter-spacing: .22em;
+      letter-spacing: .24em;
       color: #b94545;
       font-weight: 700;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
-    .modal-no {
+    .modal-id-no {
       font-family: 'Playfair Display', serif;
-      font-size: 30px;
+      font-size: 34px;
       font-weight: 700;
       color: #2b211b;
       letter-spacing: .04em;
       line-height: 1;
     }
-    .modal-key {
+    /* 内容区 */
+    .modal-info {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1.6fr;
+      align-items: center;
+      gap: 20px;
+    }
+    .modal-col-label {
       font-size: 9px;
       letter-spacing: .22em;
       color: #b94545;
       font-weight: 700;
       margin-bottom: 4px;
     }
-    .modal-val {
-      font-size: 16px;
-      font-weight: 600;
+    .modal-city {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
       color: #2b211b;
       letter-spacing: .04em;
-      line-height: 1.2;
+      line-height: 1.1;
+      margin-bottom: 6px;
     }
-    .modal-val.zh {
-      font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
-      font-size: 17px;
-      font-weight: 600;
-    }
-    .modal-val-session {
-      font-family: 'PingFang SC', sans-serif;
-      font-size: 11px;
+    /* 场次按钮 */
+    .modal-session {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border: 1.2px solid #b94545;
+      border-radius: 3px;
       color: #b94545;
-      font-weight: 600;
-      letter-spacing: .14em;
-      margin-top: 2px;
+      font-family: 'PingFang SC', sans-serif;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      background: rgba(185, 69, 69, 0.06);
     }
-    .modal-val-date {
+    .modal-session.afternoon {
+      border-color: #d99840;
+      color: #d99840;
+      background: rgba(217, 152, 64, 0.08);
+    }
+    .modal-session-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    /* 日期 */
+    .modal-date {
       font-family: 'Playfair Display', serif;
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 700;
       color: #2b211b;
       letter-spacing: .04em;
       line-height: 1;
     }
-    .modal-val-venue {
+    /* Venue */
+    .modal-venue {
       font-family: 'PingFang SC', sans-serif;
-      font-size: 13px;
-      color: #2b211b;
+      font-size: 12.5px;
       font-weight: 600;
+      color: #2b211b;
+      line-height: 1.4;
     }
+
+    /* 撕痕分隔 - 票根打孔孔 */
+    .modal-tear {
+      position: relative;
+      background-image: radial-gradient(circle at center, transparent 3px, #2b211b 3.5px, #2b211b 4px, transparent 4.5px);
+      background-size: 14px 14px;
+      background-repeat: repeat-y;
+      background-position: center 0;
+    }
+    .modal-tear::before, .modal-tear::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 18px;
+      background: #1a1410;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px #fbf3e6;
+    }
+    .modal-tear::before { top: -9px; }
+    .modal-tear::after { bottom: -9px; }
+
+    /* 右侧存根 */
+    .modal-stub {
+      padding: 18px 14px 20px;
+      background:
+        repeating-linear-gradient(135deg, rgba(185,69,69,0.04) 0 2px, transparent 2px 8px),
+        #f3e8d3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-align: center;
+    }
+    .modal-stub-label {
+      font-size: 8.5px;
+      letter-spacing: .26em;
+      color: #b94545;
+      font-weight: 700;
+    }
+    .modal-stub-barcode {
+      width: 100%;
+      display: flex;
+      gap: 1px;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      min-height: 32px;
+    }
+    .modal-stub-barcode span {
+      display: block;
+      width: 2px;
+      height: 100%;
+      background: #2b211b;
+    }
+    .modal-stub-no {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #2b211b;
+      letter-spacing: .04em;
+    }
+    .modal-stub-foot {
+      font-size: 8px;
+      letter-spacing: .22em;
+      color: #2b211b;
+      opacity: .6;
+    }
+
+    /* 状态徽章（按钮形状） */
     .modal-status {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      border: 1.4px solid #b94545;
+      gap: 5px;
+      padding: 6px 12px;
+      border: 1.4px solid #2b211b;
       border-radius: 40px;
-      color: #b94545;
+      color: #2b211b;
       font-size: 10px;
       font-weight: 700;
       letter-spacing: .16em;
       white-space: nowrap;
+      background: #fbf3e6;
+      box-shadow: 1.5px 1.5px 0 #2b211b;
     }
     .modal-status.upcoming {
-      border-color: #4a7c59;
-      color: #4a7c59;
+      border-color: #b94545;
+      color: #b94545;
+      background: #fbf3e6;
     }
     .modal-status-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: #b94545;
+      background: #2b211b;
     }
     .modal-status.upcoming .modal-status-dot {
-      background: #4a7c59;
+      background: #b94545;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 32px;
+      height: 32px;
+      background: #2b211b;
+      border: 1.4px solid #fbf3e6;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      line-height: 1;
+      color: #fbf3e6;
+      transition: all .25s;
+      z-index: 30;
+      box-shadow: 0 4px 14px rgba(43, 33, 27, 0.35);
+    }
+    .modal-close:hover {
+      background: #b94545;
+      border-color: #b94545;
+      transform: rotate(90deg);
     }
 
     @media (max-width: 900px) {
@@ -573,9 +681,25 @@
       .accordion-top { padding: 14px 18px 10px; }
       .accordion-title { font-size: 14px; }
       .accordion-bottom { padding: 10px 18px 14px; }
-      .modal-row { grid-template-columns: 1fr 1fr; gap: 12px; }
-      .modal-left { grid-column: 1 / -1; border-right: none; border-bottom: 1.4px solid #2b211b; padding-right: 0; padding-bottom: 10px; }
-      .modal-ticket { padding: 18px 20px; }
+      .modal-ticket { grid-template-columns: 1fr; }
+      .modal-tear {
+        height: 14px;
+        background-image: radial-gradient(circle at center, transparent 3px, #2b211b 3.5px, #2b211b 4px, transparent 4.5px);
+        background-size: 14px 14px;
+        background-repeat: repeat-x;
+        background-position: 0 center;
+      }
+      .modal-tear::before, .modal-tear::after {
+        top: 50%; left: -9px; right: auto; transform: translateY(-50%);
+      }
+      .modal-tear::after { left: auto; right: -9px; }
+      .modal-main { grid-template-columns: 1fr; padding: 18px 18px 16px; gap: 14px; }
+      .modal-id { border-right: none; border-bottom: 1.4px dashed #b94545; padding: 0 0 10px; }
+      .modal-info { grid-template-columns: 1fr 1fr; gap: 14px; }
+      .modal-info > div:nth-child(3) { grid-column: 1 / -1; }
+      .modal-stub { padding: 16px 14px; }
+      .modal-stub-no { font-size: 18px; }
+      .modal-city, .modal-date { font-size: 22px; }
     }
 
         .tour-list { display: grid; gap: 10px; }
@@ -1060,38 +1184,56 @@
       });
     }
 
-    // 票根弹窗
+    // 票根弹窗 - 票根艺术设计
     function openTicketModal(tour) {
-      const id = String(tour.id).padStart(3, '0');
+      const id = String(tour.id); // 不补 0 - NO.1 NO.2 ...
       const [month, day] = tour.date.split('.');
       const isUpcoming = tour.status === 'upcoming';
+      const isAfternoon = tour.session && tour.session.includes('午');
+      // 生成条形码（伪）
+      const bars = [];
+      const seed = tour.id;
+      for (let i = 0; i < 36; i++) {
+        const w = ((seed * (i + 3)) % 3) + 1; // 1-3px
+        const opaque = (seed + i) % 7 !== 0; // 偶有空白
+        bars.push(`<span style="width:${w}px;${opaque ? '' : 'background:transparent;border-left:0;'}"></span>`);
+      }
       const html = `
         <div class="modal-ticket">
-          <button class="modal-close" onclick="closeTicketModal()">×</button>
-          <div class="modal-row">
-            <div class="modal-left">
-              <div class="modal-label">TOUR STOP</div>
-              <div class="modal-no">NO.${id}</div>
+          <button class="modal-close" aria-label="关闭">×</button>
+          <div class="modal-main">
+            <div class="modal-id">
+              <div class="modal-id-label">TOUR STOP</div>
+              <div class="modal-id-no">NO.${id}</div>
             </div>
-            <div>
-              <div class="modal-key">场次编号</div>
-              <div class="modal-val zh">${tour.city}</div>
-              <div class="modal-val-session">${tour.session}</div>
+            <div class="modal-info">
+              <div>
+                <div class="modal-col-label">CITY</div>
+                <div class="modal-city">${tour.city}</div>
+                <span class="modal-session ${isAfternoon ? 'afternoon' : ''}">
+                  <span class="modal-session-dot"></span>${tour.session}
+                </span>
+              </div>
+              <div>
+                <div class="modal-col-label">DATE</div>
+                <div class="modal-date">${day} / ${month}</div>
+              </div>
+              <div>
+                <div class="modal-col-label">VENUE</div>
+                <div class="modal-venue">${tour.venue}</div>
+              </div>
             </div>
-            <div>
-              <div class="modal-key">日期</div>
-              <div class="modal-val-date">${day} / ${month}</div>
-            </div>
-            <div>
-              <div class="modal-key">Venue</div>
-              <div class="modal-val-venue">${tour.venue}</div>
-            </div>
-            <div>
-              <span class="modal-status ${isUpcoming ? 'upcoming' : ''}">
-                <span class="modal-status-dot"></span>
-                ${isUpcoming ? 'UPCOMING 待演' : 'ARCHIVED 已结束'}
-              </span>
-            </div>
+          </div>
+          <div class="modal-tear"></div>
+          <div class="modal-stub">
+            <div class="modal-stub-label">ADMIT ONE</div>
+            <div class="modal-stub-barcode">${bars.join('')}</div>
+            <div class="modal-stub-no">${id}</div>
+            <div class="modal-stub-foot">SUGAR TOUR</div>
+            <span class="modal-status ${isUpcoming ? 'upcoming' : ''}">
+              <span class="modal-status-dot"></span>
+              ${isUpcoming ? 'UPCOMING' : '已结束'}
+            </span>
           </div>
         </div>`;
       let backdrop = document.getElementById('modal-backdrop');
@@ -1105,14 +1247,19 @@
         });
       }
       backdrop.innerHTML = html;
-      requestAnimationFrame(() => backdrop.classList.add('show'));
+      const closeBtn = backdrop.querySelector('.modal-close');
+      if (closeBtn) closeBtn.addEventListener('click', closeTicketModal);
+      backdrop.classList.add('show');
       document.body.style.overflow = 'hidden';
     }
     function closeTicketModal() {
       const backdrop = document.getElementById('modal-backdrop');
       if (backdrop) {
         backdrop.classList.remove('show');
-        setTimeout(() => { document.body.style.overflow = ''; }, 400);
+        setTimeout(() => {
+          backdrop.innerHTML = '';
+          document.body.style.overflow = '';
+        }, 300);
       }
     }
     document.addEventListener('keydown', e => {
