@@ -434,6 +434,13 @@
       display: flex;
       opacity: 1;
     }
+    /* 票根包装 - 相对定位容器，按钮基于此绝对定位 */
+    .modal-ticket-wrap {
+      position: relative;
+      display: block;
+      padding-top: 60px; /* 给关闭按钮留出独立空间 */
+      padding-right: 60px;
+    }
     /* 票根整体 - 米白 + 深棕细线 + 圆角 */
     .modal-ticket {
       width: 740px;
@@ -653,10 +660,10 @@
 
     .modal-close {
       position: absolute;
-      top: -14px;
-      right: -14px;
-      width: 32px;
-      height: 32px;
+      top: 8px;
+      right: 8px;
+      width: 36px;
+      height: 36px;
       background: #2b211b;
       border: 1.4px solid #fbf3e6;
       border-radius: 50%;
@@ -664,7 +671,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 18px;
       line-height: 1;
       color: #fbf3e6;
       transition: all .25s;
@@ -1203,9 +1210,10 @@
         bars.push(`<span style="width:${w}px;${opaque ? '' : 'background:transparent;border-left:0;'}"></span>`);
       }
       const html = `
-        <div class="modal-ticket">
+        <div class="modal-ticket-wrap">
           <button class="modal-close" aria-label="关闭">×</button>
-          <div class="modal-main">
+          <div class="modal-ticket">
+            <div class="modal-main">
             <div class="modal-id">
               <div class="modal-id-label">TOUR STOP</div>
               <div class="modal-id-no">NO.${id}</div>
@@ -1238,6 +1246,7 @@
               <span class="modal-status-dot"></span>
               ${isUpcoming ? 'UPCOMING' : '已结束'}
             </span>
+          </div>
           </div>
         </div>`;
       let backdrop = document.getElementById('modal-backdrop');
