@@ -436,7 +436,7 @@
     }
     /* 票根整体 - 米白 + 深棕细线 + 圆角 */
     .modal-ticket {
-      width: 820px;
+      width: 740px;
       max-width: 92vw;
       background: #fbf3e6;
       border: 1.4px solid #2b211b;
@@ -447,15 +447,15 @@
       font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
       box-shadow: 0 24px 60px rgba(43, 33, 27, 0.22), 0 6px 18px rgba(43, 33, 27, 0.12);
       display: grid;
-      grid-template-columns: 1fr 16px 130px;
+      grid-template-columns: 1fr 20px 120px;
       overflow: visible;
     }
     /* 左侧票根主体 */
     .modal-main {
-      padding: 22px 30px;
+      padding: 22px 26px;
       display: grid;
-      grid-template-columns: 96px 1fr;
-      gap: 22px;
+      grid-template-columns: 88px 1fr;
+      gap: 20px;
       align-items: center;
     }
     /* 编号区 */
@@ -473,7 +473,7 @@
     }
     .modal-id-no {
       font-family: 'Playfair Display', serif;
-      font-size: 34px;
+      font-size: 26px;
       font-weight: 700;
       color: #2b211b;
       letter-spacing: .04em;
@@ -554,19 +554,23 @@
       background-repeat: repeat-y;
       background-position: center 0;
     }
+    /* 立体穿孔：径向渐变 + 内阴影，营造打穿的洞 */
     .modal-tear::before, .modal-tear::after {
       content: '';
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      width: 18px;
-      height: 18px;
-      background: #1a1410;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
-      box-shadow: 0 0 0 2px #fbf3e6;
+      background: radial-gradient(circle at 50% 50%, #1a1410 0%, #1a1410 38%, #2b211b 55%, #6b5546 78%, #b89980 100%);
+      box-shadow:
+        inset 1.5px 1.5px 2px rgba(0, 0, 0, 0.7),
+        inset -1px -1px 1.2px rgba(255, 255, 255, 0.35),
+        0 0 0 1.5px #2b211b;
     }
-    .modal-tear::before { top: -9px; }
-    .modal-tear::after { bottom: -9px; }
+    .modal-tear::before { top: -8px; }
+    .modal-tear::after { bottom: -8px; }
 
     /* 右侧存根 */
     .modal-stub {
