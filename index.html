@@ -178,80 +178,100 @@
     .filter:hover, .filter.active { border-color: var(--blue); color: var(--blue-deep); background: #eef0ff; }
 
     /* ============================================
-       2D 档案柜（横向叠放，每屏3个文件夹）
+       3D 巡演秘密档案柜（手风琴文件夹）
+       - 上窄下宽，远处小近处大
+       - 每层3个文件夹横向错位叠放
+       - 黑色标签凸起显示 编号+城市中文
        ============================================ */
     .cabinet-scene {
       position: relative;
-      margin: 40px auto 60px;
+      perspective: 1600px;
+      perspective-origin: 50% 0%;
+      margin: 30px auto 60px;
       padding: 0 20px;
       max-width: 1100px;
     }
     .cabinet-inner {
       position: relative;
-      padding: 60px 0 80px;
+      transform-style: preserve-3d;
+      padding: 0 0 80px;
     }
-    .cabinet-page {
+    /* 一组 = 一层 3 个文件夹 */
+    .cabinet-row {
       position: relative;
       width: 100%;
-      height: 760px;
-      margin-bottom: 40px;
+      height: 120px;
+      margin: -32px 0;
+      transform-style: preserve-3d;
     }
-    /* 文件夹绝对定位 */
+    /* 单个文件夹 */
     .folder {
       position: absolute;
       height: 120px;
       cursor: pointer;
-      transition: transform .7s cubic-bezier(.22,.61,.36,1), z-index 0s;
-      width: 78%;
-      max-width: 780px;
+      transition: transform .6s cubic-bezier(.22,.61,.36,1);
+      display: flex;
+      align-items: stretch;
+      background: transparent;
+    }
+    /* 文件夹左右两端形态 */
+    .folder-left {
+      width: 28px;
+      height: 100%;
+      position: relative;
+      background: #f0e3cc;
+      border: 1.4px solid #2b211b;
+      border-right: none;
+      border-radius: 4px 0 0 4px;
+    }
+    .folder-left::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(90deg, rgba(43,33,27,.12), transparent);
+    }
+    .folder-body {
+      flex: 1;
+      height: 100%;
+      background: #fbf3e6;
+      border-top: 1.4px solid #2b211b;
+      border-bottom: 1.4px solid #2b211b;
       display: flex;
       align-items: center;
-      padding: 0 38px 0 56px;
-      gap: 0;
-      background: #fbf3e6;
+      padding: 0 32px;
+      position: relative;
+    }
+    .folder-right {
+      width: 28px;
+      height: 100%;
+      position: relative;
+      background: #f0e3cc;
       border: 1.4px solid #2b211b;
-      border-radius: 4px 14px 4px 4px;
-      transform-origin: center bottom;
+      border-left: none;
+      border-radius: 0 4px 4px 0;
     }
-    /* 三种位置：左、中、右 */
-    .folder.pos-left {
+    .folder-right::before {
+      content: '';
+      position: absolute;
       left: 0;
-      width: 64%;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(270deg, rgba(43,33,27,.12), transparent);
     }
-    .folder.pos-center {
-      left: 18%;
-      width: 70%;
-    }
-    .folder.pos-right {
-      left: 32%;
-      width: 64%;
-    }
-    /* 不同z-index形成叠放层次 */
-    .folder.z-top { z-index: 5; }
-    .folder.z-mid { z-index: 3; }
-    .folder.z-bot { z-index: 1; }
-    /* 错落的上下偏移 */
-    .folder.shift-up { top: 0; }
-    .folder.shift-mid { top: 130px; }
-    .folder.shift-down { top: 240px; }
-    .folder.shift-4 { top: 380px; }
-    .folder.shift-5 { top: 510px; }
-    .folder.shift-6 { top: 620px; }
-    .folder:hover { z-index: 10 !important; }
-    .folder:hover.pos-left { transform: translateX(8px); }
-    .folder:hover.pos-right { transform: translateX(-8px); }
-    .folder.open { z-index: 20 !important; }
-    /* 顶部小标签（凸起） */
+    /* 顶部黑色凸起标签 */
     .folder-tab {
       position: absolute;
-      top: -12px;
+      top: -14px;
       left: 50%;
       transform: translateX(-50%);
-      min-width: 130px;
-      height: 26px;
-      background: #3a2a1f;
-      border: 1.4px solid #2b211b;
-      border-bottom: none;
+      min-width: 150px;
+      height: 28px;
+      background: #1a1410;
+      border: 1.4px solid #1a1410;
       border-radius: 4px 4px 0 0;
       display: flex;
       align-items: center;
@@ -259,27 +279,65 @@
       padding: 0 14px;
       font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
       font-size: 11px;
+      letter-spacing: .12em;
+      color: #f5e9d4;
+      z-index: 5;
+      box-shadow: 0 4px 8px rgba(26,20,16,.25);
+    }
+    .folder-tab-letter {
+      font-weight: 700;
+      color: #f5d96a;
+      min-width: 16px;
+    }
+    .folder-tab-num {
+      font-weight: 700;
+      color: #f5e9d4;
+    }
+    .folder-tab-city {
+      font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #f5e9d4;
       letter-spacing: .14em;
-      color: #fbf3e6;
-      z-index: 2;
+      margin-left: 8px;
     }
-    .folder-tab-letter { font-weight: 700; }
-    .folder-tab-num { font-weight: 700; }
-    /* 顶部凸起：标签底部接文件夹 */
-    .folder-tab::after {
-      content: '';
-      position: absolute;
-      bottom: -3px;
-      left: -1.4px;
-      right: -1.4px;
-      height: 6px;
-      background: #3a2a1f;
-      border-left: 1.4px solid #2b211b;
-      border-right: 1.4px solid #2b211b;
+    /* 文件夹之间的前后叠压 */
+    .folder.z-top { z-index: 5; }
+    .folder.z-mid { z-index: 3; }
+    .folder.z-bot { z-index: 1; }
+    /* 三列定位 + 远近透视 */
+    .col-left {
+      left: 0;
+      width: 32%;
+      transform-origin: left center;
     }
+    .col-center {
+      left: 34%;
+      width: 32%;
+      transform-origin: center center;
+    }
+    .col-right {
+      left: 68%;
+      width: 32%;
+      transform-origin: right center;
+    }
+    /* 透视行：上小下大 */
+    .cabinet-row {
+      transform-origin: 50% 0%;
+    }
+    .cabinet-row.persp-far { transform: scale(0.7); opacity: .6; margin-bottom: 24px; }
+    .cabinet-row.persp-mid { transform: scale(0.85); opacity: .85; margin-bottom: 18px; }
+    .cabinet-row.persp-near { transform: scale(1); margin-bottom: 12px; }
+    .cabinet-row.persp-front { transform: scale(1.12); margin-bottom: 18px; }
+    /* hover 效果：文件夹略向前 */
+    .folder:hover { z-index: 50 !important; }
+    .folder:hover.col-left { transform: translateX(6px); }
+    .folder:hover.col-right { transform: translateX(-6px); }
+    .folder:hover.col-center { transform: translateY(-2px); }
+    /* 内容区 - 默认只显示编号和城市 */
     .folder-content {
       position: relative;
-      z-index: 3;
+      z-index: 2;
       display: flex;
       align-items: center;
       gap: 0;
@@ -287,164 +345,26 @@
       pointer-events: none;
     }
     .folder-no {
-      font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
-      font-size: 22px;
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
       font-weight: 700;
       color: #2b211b;
       letter-spacing: .04em;
-      min-width: 60px;
+      min-width: 64px;
     }
-    .folder-pinyin {
-      font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
-      font-size: 18px;
+    .folder-city {
+      font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      font-size: 16px;
       font-weight: 600;
       color: #2b211b;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      margin-left: auto;
-      padding-right: 12px;
+      letter-spacing: .18em;
+      margin-left: 12px;
     }
     .folder-date, .folder-venue, .folder-session { display: none; }
 
-    /* 点击展开后的详情区 */
-    .folder-detail {
-      position: absolute;
-      background: #fbf3e6;
-      border: 1.4px solid #2b211b;
-      border-radius: 4px;
-      padding: 32px 44px;
-      font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
-      color: #2b211b;
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-height .8s cubic-bezier(.22,.61,.36,1), opacity .5s .1s, padding .6s, margin .6s, transform .7s cubic-bezier(.22,.61,.36,1);
-      padding-top: 0;
-      padding-bottom: 0;
-      pointer-events: none;
-      z-index: 50;
-      width: 90%;
-      max-width: 900px;
-      left: 5%;
-    }
-    .folder-detail.show {
-      max-height: 480px;
-      opacity: 1;
-      padding: 32px 44px;
-      pointer-events: auto;
-    }
-    /* 详情跟随原folder的居中位置 */
-    .folder-detail.pos-left.show { left: 0; }
-    .folder-detail.pos-center.show { left: 5%; }
-    .folder-detail.pos-right.show { left: 10%; }
-    .folder-detail.shift-up.show { top: 130px; }
-    .folder-detail.shift-mid.show { top: 260px; }
-    .folder-detail.shift-down.show { top: 370px; }
-    .folder-detail-row {
-      display: grid;
-      grid-template-columns: 120px 1fr;
-      gap: 24px;
-      padding: 12px 0;
-      border-bottom: 1px dashed rgba(43,33,27,.25);
-      align-items: baseline;
-    }
-    .folder-detail-row:last-child { border-bottom: none; }
-    .folder-detail-label {
-      font-size: 10px;
-      letter-spacing: .2em;
-      color: #2b211b;
-      font-weight: 700;
-    }
-    .folder-detail-value {
-      font-size: 14px;
-      letter-spacing: .06em;
-    }
-    .folder-detail-value.zh {
-      font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
-      font-size: 16px;
-      letter-spacing: .04em;
-    }
-    .folder-detail-headline {
-      font-size: 30px;
-      font-weight: 700;
-      letter-spacing: .14em;
-      margin-bottom: 22px;
-      padding-bottom: 16px;
-      border-bottom: 1.4px solid #2b211b;
-      display: flex;
-      align-items: baseline;
-      gap: 22px;
-    }
-    .folder-detail-headline .no {
-      font-size: 36px;
-      color: #b94545;
-      font-family: 'Playfair Display', serif;
-    }
-    .folder-detail-headline .py {
-      font-size: 24px;
-      letter-spacing: .2em;
-    }
-    .folder-detail-headline .zh {
-      font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
-      font-size: 26px;
-      color: #2b211b;
-      letter-spacing: .04em;
-    }
-    .folder-stamp {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 96px;
-      height: 96px;
-      border: 2.2px solid #b94545;
-      border-radius: 50%;
-      color: #b94545;
-      font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
-      font-weight: 700;
-      transform: rotate(-8deg);
-      text-align: center;
-      line-height: 1.05;
-      position: relative;
-      background:
-        radial-gradient(circle, rgba(185,69,69,.06) 0%, transparent 70%);
-    }
-    .folder-stamp::before {
-      content: '';
-      position: absolute;
-      inset: 5px;
-      border: 1px dashed rgba(185,69,69,.4);
-      border-radius: 50%;
-    }
-    .folder-stamp.upcoming {
-      border-color: #4a7c59;
-      color: #4a7c59;
-      background: radial-gradient(circle, rgba(74,124,89,.06) 0%, transparent 70%);
-    }
-    .folder-stamp.upcoming::before { border-color: rgba(74,124,89,.4); }
-    .folder-stamp-cn {
-      font-family: 'PingFang SC', sans-serif;
-      font-size: 10px;
-      letter-spacing: .12em;
-      margin-top: 2px;
-    }
-    .folder-detail-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 22px;
-      padding-top: 16px;
-      border-top: 1.4px solid #2b211b;
-    }
-    .folder-detail-tag {
-      font-size: 10px;
-      letter-spacing: .22em;
-      color: #2b211b;
-    }
-    .ticket-wrap { display: none; }
-
+    /* 底座 */
     .cabinet-base {
-      margin: 40px auto 0;
+      margin: 60px auto 0;
       max-width: 920px;
       width: 92%;
       position: relative;
@@ -453,7 +373,7 @@
       content: '';
       display: block;
       height: 56px;
-      background: #fbf3e6;
+      background: #f0e3cc;
       border: 1.4px solid #2b211b;
       border-radius: 4px;
     }
@@ -463,40 +383,187 @@
       top: 16px;
       transform: translateX(-50%);
       background: #f5d96a;
-      color: #2b211b;
+      color: #1a1410;
       padding: 6px 22px;
       border-radius: 4px;
       font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
       font-size: 12px;
       font-weight: 700;
       letter-spacing: .14em;
-      border: 1.4px solid #2b211b;
+      border: 1.4px solid #1a1410;
       white-space: nowrap;
     }
 
+    /* ============================================
+       票根弹窗 (图2风格)
+       ============================================ */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 20, 16, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity .4s;
+    }
+    .modal-backdrop.show {
+      display: flex;
+      opacity: 1;
+    }
+    .modal-ticket {
+      width: 480px;
+      max-width: 92vw;
+      background: #fbf3e6;
+      border: 1.4px solid #2b211b;
+      border-radius: 4px;
+      padding: 32px 40px;
+      position: relative;
+      font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
+      color: #2b211b;
+      transform: translateY(20px) scale(0.96);
+      transition: transform .5s cubic-bezier(.22,.61,.36,1);
+    }
+    .modal-backdrop.show .modal-ticket {
+      transform: translateY(0) scale(1);
+    }
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      border: 1.4px solid #2b211b;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      line-height: 1;
+      color: #2b211b;
+      transition: all .2s;
+    }
+    .modal-close:hover {
+      background: #2b211b;
+      color: #fbf3e6;
+    }
+    .modal-headline {
+      display: flex;
+      align-items: baseline;
+      gap: 18px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1.4px solid #2b211b;
+    }
+    .modal-headline .label {
+      font-size: 10px;
+      letter-spacing: .22em;
+      color: #b94545;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .modal-headline .no {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: #2b211b;
+      letter-spacing: .04em;
+    }
+    .modal-tour-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .modal-tour {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #2b211b;
+      letter-spacing: .14em;
+    }
+    .modal-detail-list {
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-detail-row {
+      display: flex;
+      align-items: baseline;
+      gap: 18px;
+      padding: 14px 0;
+      border-bottom: 1px dashed rgba(43,33,27,.25);
+    }
+    .modal-detail-row:last-child {
+      border-bottom: none;
+    }
+    .modal-detail-row .key {
+      font-size: 10px;
+      letter-spacing: .2em;
+      color: #b94545;
+      font-weight: 700;
+      min-width: 64px;
+    }
+    .modal-detail-row .val {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2b211b;
+      letter-spacing: .04em;
+    }
+    .modal-detail-row .val.zh {
+      font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .modal-detail-row .val-date {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #2b211b;
+      letter-spacing: .04em;
+    }
+    .modal-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1.6px solid #b94545;
+      border-radius: 40px;
+      color: #b94545;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .18em;
+    }
+    .modal-status.upcoming {
+      border-color: #4a7c59;
+      color: #4a7c59;
+    }
+    .modal-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #b94545;
+    }
+    .modal-status.upcoming .modal-status-dot {
+      background: #4a7c59;
+    }
+
     @media (max-width: 900px) {
-      .cabinet-page { height: 900px; }
-      .folder { height: 100px; padding: 0 24px 0 32px; }
-      .folder.pos-left, .folder.pos-center, .folder.pos-right {
-        width: 80%; left: 10%;
-      }
-      .folder.shift-up { top: 0; }
-      .folder.shift-mid { top: 130px; }
-      .folder.shift-down { top: 260px; }
-      .folder.shift-4 { top: 410px; }
-      .folder.shift-5 { top: 560px; }
-      .folder.shift-6 { top: 720px; }
-      .folder-no { font-size: 18px; min-width: 50px; }
-      .folder-pinyin { font-size: 14px; }
-      .folder-tab { min-width: 100px; height: 22px; font-size: 10px; }
-      .folder-detail { padding: 20px 24px; left: 5% !important; width: 90%; }
-      .folder-detail.show { padding: 20px 24px; }
-      .folder-detail-headline { font-size: 18px; flex-wrap: wrap; gap: 12px; }
-      .folder-detail-headline .no { font-size: 22px; }
-      .folder-detail-headline .py { font-size: 14px; }
-      .folder-detail-headline .zh { font-size: 16px; }
-      .folder-detail-row { grid-template-columns: 80px 1fr; gap: 12px; }
-      .folder-stamp { width: 64px; height: 64px; }
+      .cabinet-row { height: 100px; margin: -22px 0; }
+      .folder { height: 100px; }
+      .folder-left, .folder-right { width: 22px; }
+      .folder-body { padding: 0 18px; }
+      .folder-tab { min-width: 120px; height: 24px; font-size: 10px; padding: 0 10px; }
+      .folder-no { font-size: 20px; min-width: 50px; }
+      .folder-city { font-size: 13px; }
+      .modal-ticket { padding: 24px 22px; }
+      .modal-headline .no { font-size: 26px; }
+      .modal-detail-row .val { font-size: 15px; }
+      .modal-detail-row .val.zh { font-size: 16px; }
+      .modal-detail-row .val-date { font-size: 20px; }
     }
 
         .tour-list { display: grid; gap: 10px; }
@@ -932,78 +999,41 @@
       empty.classList.toggle('visible', visibleTours.length === 0);
     }
     function renderCabinet(toursToShow) {
-      const pageSize = 6;
-      const pages = [];
+      const pageSize = 3;
+      const rows = [];
+      // 每 3 个一组
       for (let i = 0; i < toursToShow.length; i += pageSize) {
-        pages.push(toursToShow.slice(i, i + pageSize));
+        rows.push(toursToShow.slice(i, i + pageSize));
       }
-      // 每页6个文件夹的定位模式
-      // 形成 3 行 × 2 列的错落叠放
-      const positionPatterns = [
-        // 第一组（顶部）：左偏大 + 右偏中
-        { pos: 'pos-left',  shift: 'shift-up',   z: 'z-top' },
-        { pos: 'pos-right', shift: 'shift-mid',  z: 'z-mid' },
-        // 第二组（中上）：右偏大 + 左偏下
-        { pos: 'pos-right', shift: 'shift-down', z: 'z-top' },
-        { pos: 'pos-left',  shift: 'shift-4',    z: 'z-mid' },
-        // 第三组（中部）：中间错落
-        { pos: 'pos-center', shift: 'shift-5',   z: 'z-bot' },
-        { pos: 'pos-right',  shift: 'shift-6',   z: 'z-mid' },
-      ];
-      cabinet.innerHTML = pages.map((pageTours, pageIdx) => {
-        // 每页6个：3个上层 + 3个下层
-        const patterns = [
-          // 顶层3个：左/中/右错开
-          { pos: 'pos-left',   shift: 'shift-up',   z: 'z-top' },
-          { pos: 'pos-center', shift: 'shift-mid',  z: 'z-mid' },
-          { pos: 'pos-right',  shift: 'shift-down', z: 'z-bot' },
-          // 下层3个：错开上层，形成3列
-          { pos: 'pos-center', shift: 'shift-4',    z: 'z-top' },
-          { pos: 'pos-left',   shift: 'shift-5',    z: 'z-mid' },
-          { pos: 'pos-right',  shift: 'shift-6',    z: 'z-bot' },
+      // 透视层级循环 - 让档案柜从远到近循环
+      const perspCycle = ['persp-far', 'persp-mid', 'persp-near', 'persp-front'];
+      cabinet.innerHTML = rows.map((rowTours, rowIdx) => {
+        const persp = perspCycle[rowIdx % 4];
+        // 每行内部3个：左/中/右
+        const colPatterns = [
+          { col: 'col-left',   z: 'z-bot' },
+          { col: 'col-center', z: 'z-top' },
+          { col: 'col-right',  z: 'z-mid' },
         ];
         return `
-        <div class="cabinet-page" data-page="${pageIdx}">
-          ${pageTours.map((tour, idx) => {
-            const pattern = patterns[idx % 6];
+        <div class="cabinet-row ${persp}">
+          ${rowTours.map((tour, idx) => {
+            const pattern = colPatterns[idx % 3];
             const id = String(tour.id).padStart(3, '0');
-            const firstLetter = tour.pinyin[0];
             return `
-            <div class="folder ${pattern.pos} ${pattern.shift} ${pattern.z} ${tour.status} ${openFolderId === tour.id ? 'open' : ''}" data-id="${tour.id}">
+            <div class="folder ${pattern.col} ${pattern.z} ${tour.status}" data-id="${tour.id}">
               <div class="folder-tab">
-                <span class="folder-tab-letter">${firstLetter}</span>
                 <span class="folder-tab-num">${id}</span>
+                <span class="folder-tab-city">${tour.city}</span>
               </div>
-              <div class="folder-content">
-                <span class="folder-no">${id}</span>
-                <span class="folder-pinyin">${tour.pinyin}</span>
-              </div>
-            </div>
-            <div class="folder-detail ${pattern.pos} ${openFolderId === tour.id ? 'show' : ''}" data-detail-id="${tour.id}">
-              <div class="folder-detail-headline">
-                <span class="no">NO.${id}</span>
-                <span class="py">${tour.pinyin}</span>
-                <span class="zh">${tour.city}</span>
-              </div>
-              <div class="folder-detail-row">
-                <span class="folder-detail-label">DATE</span>
-                <span class="folder-detail-value">${tour.fullDate} · ${tour.session}</span>
-              </div>
-              <div class="folder-detail-row">
-                <span class="folder-detail-label">VENUE</span>
-                <span class="folder-detail-value zh">${tour.venue}</span>
-              </div>
-              <div class="folder-detail-row">
-                <span class="folder-detail-label">TOUR</span>
-                <span class="folder-detail-value">KATRINA TANG · TREAT TOUR</span>
-              </div>
-              <div class="folder-detail-bottom">
-                <div class="folder-stamp ${tour.status}">
-                  <div>${tour.status === 'upcoming' ? 'UPCOMING' : 'ARCHIVED'}</div>
-                  <div class="folder-stamp-cn">${tour.statusText}</div>
+              <div class="folder-left"></div>
+              <div class="folder-body">
+                <div class="folder-content">
+                  <span class="folder-no">${id}</span>
+                  <span class="folder-city">${tour.city}</span>
                 </div>
-                <span class="folder-detail-tag">FILE NO. ${id} / 121</span>
               </div>
+              <div class="folder-right"></div>
             </div>`;
           }).join('')}
         </div>`;
@@ -1013,21 +1043,76 @@
         folder.addEventListener('click', e => {
           e.stopPropagation();
           const id = Number(folder.dataset.id);
-          const detail = cabinet.querySelector(`.folder-detail[data-detail-id="${id}"]`);
-          const isOpen = folder.classList.contains('open');
-          // 关闭所有
-          cabinet.querySelectorAll('.folder.open').forEach(f => f.classList.remove('open'));
-          cabinet.querySelectorAll('.folder-detail.show').forEach(d => d.classList.remove('show'));
-          if (!isOpen) {
-            folder.classList.add('open');
-            if (detail) detail.classList.add('show');
-            openFolderId = id;
-          } else {
-            openFolderId = null;
-          }
+          const tour = toursToShow.find(t => t.id === id);
+          if (!tour) return;
+          openTicketModal(tour);
         });
       });
     }
+
+    // 票根弹窗
+    function openTicketModal(tour) {
+      const id = String(tour.id).padStart(3, '0');
+      const [month, day] = tour.date.split('.');
+      const isUpcoming = tour.status === 'upcoming';
+      const html = `
+        <div class="modal-ticket">
+          <button class="modal-close" onclick="closeTicketModal()">×</button>
+          <div class="modal-headline">
+            <div>
+              <div class="label">TOUR STOP</div>
+              <div class="no">NO.${id}</div>
+            </div>
+          </div>
+          <div class="modal-tour-row">
+            <span class="modal-tour">KATRINA TANG · TREAT TOUR</span>
+          </div>
+          <div class="modal-detail-list">
+            <div class="modal-detail-row">
+              <span class="key">CITY</span>
+              <span class="val zh">${tour.city} · ${tour.session}</span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="key">DATE</span>
+              <span class="val-date">${day} / ${month}</span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="key">VENUE</span>
+              <span class="val zh">${tour.venue}</span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="key">STATUS</span>
+              <span class="modal-status ${isUpcoming ? 'upcoming' : ''}">
+                <span class="modal-status-dot"></span>
+                ${isUpcoming ? 'UPCOMING · 待演' : 'ARCHIVED · 已结束'}
+              </span>
+            </div>
+          </div>
+        </div>`;
+      let backdrop = document.getElementById('modal-backdrop');
+      if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'modal-backdrop';
+        backdrop.className = 'modal-backdrop';
+        document.body.appendChild(backdrop);
+        backdrop.addEventListener('click', e => {
+          if (e.target === backdrop) closeTicketModal();
+        });
+      }
+      backdrop.innerHTML = html;
+      requestAnimationFrame(() => backdrop.classList.add('show'));
+      document.body.style.overflow = 'hidden';
+    }
+    function closeTicketModal() {
+      const backdrop = document.getElementById('modal-backdrop');
+      if (backdrop) {
+        backdrop.classList.remove('show');
+        setTimeout(() => { document.body.style.overflow = ''; }, 400);
+      }
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeTicketModal();
+    });
 
     document.querySelectorAll('.filter').forEach(button => button.addEventListener('click', () => {
       document.querySelector('.filter.active').classList.remove('active');
