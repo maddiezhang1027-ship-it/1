@@ -2649,8 +2649,9 @@
       journeyMarker = new amapApi.Marker({
         position: path[0],
         anchor: 'center',
-        content: `<div class="journey-candy">${candyHouseSvg()}</div>`,
-        zIndex: 130
+        content: `<div class="journey-candy" role="img" aria-label="移动中的糖果屋">${candyHouseSvg()}</div>`,
+        offset: new amapApi.Pixel(-28, -28),
+        zIndex: 150
       });
       amap.add([journeyRoute, journeyMarker]);
       amap.setFitView([journeyRoute, journeyMarker], false, [64, 64, 64, 64], 5);
