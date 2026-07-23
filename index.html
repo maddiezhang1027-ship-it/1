@@ -1206,7 +1206,7 @@
     .amap-container .amap-logo, .amap-container .amap-copyright { opacity: .55; }
     .map-canvas.amap-ready .amap-container { opacity: .92; }
     .map-canvas.amap-ready::before { opacity: .08; }
-    .map-canvas.amap-ready .map-grid, .map-canvas.amap-ready .route-layer, .map-canvas.amap-ready .map-city { display: none; }
+    .map-canvas.amap-ready .map-grid, .map-canvas.amap-ready .route-layer, .map-canvas.amap-ready .map-city { display: none !important; }
     .map-canvas.amap-ready .map-points { pointer-events: none; }
     .amap-city-marker { display: grid; place-items: center; width: var(--bubble-size); height: var(--bubble-size); padding: 0; border: 1px solid rgba(255,255,255,.95); border-radius: 50%; color: white; background: linear-gradient(145deg, #e9979e, #b85e73); box-shadow: 0 5px 16px rgba(151,81,94,.28), 0 0 0 5px rgba(247,123,155,.12); font-family: var(--mono); font-size: 10px; cursor: pointer; }
     .amap-city-marker:hover, .amap-city-marker:focus-visible { outline: none; transform: scale(1.12); box-shadow: 0 6px 18px rgba(151,81,94,.32), 0 0 0 7px rgba(247,123,155,.16); }
@@ -1217,6 +1217,9 @@
     .amap-city-marker.is-candy b { top: calc(100% + 7px); max-width: 150px; padding: 3px 6px; border-radius: 5px; overflow: hidden; color: var(--ink); background: rgba(255,248,242,.9); font-size: 10px; text-overflow: ellipsis; transform: translateX(-50%); }
     .amap-route-line { stroke: #9CD4F6; stroke-dasharray: 7 4; filter: drop-shadow(0 2px 3px rgba(89,166,213,.25)); }
     .candy-house-icon { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 3px 3px rgba(83,62,57,.24)); }
+    .journey-candy { display: block; width: 56px; height: 56px; pointer-events: none; }
+    .journey-candy .candy-house-icon { width: 56px; height: 56px; transform-origin: 50% 88%; animation: candy-house-bob .75s ease-in-out infinite alternate; }
+    .amap-journey-marker { position: absolute; z-index: 160; width: 56px; height: 56px; pointer-events: none; transform: translate(-50%, -50%); filter: drop-shadow(0 4px 5px rgba(83,62,57,.25)); }
     .map-journey-marker { position: absolute; z-index: 5; width: 52px; height: 52px; pointer-events: none; transform: translate(-50%, -50%); transition: left .36s ease-in-out, top .36s ease-in-out; filter: drop-shadow(0 4px 5px rgba(83,62,57,.22)); }
     .map-journey-marker .candy-house-icon { transform-origin: 50% 88%; animation: candy-house-bob .75s ease-in-out infinite alternate; }
     @keyframes candy-house-bob { to { transform: translateY(-3px) rotate(1.5deg); } }
@@ -2409,8 +2412,13 @@
     let activeAmapFilter = 'all';
     let journeyMarker;
     let journeyRoute;
+    let amapTourRoute;
     let journeyMode = 'static';
     let journeyTimer;
+    let journeyAnimationFrame;
+    let journeyElapsed = 0;
+    let journeyStartedAt = 0;
+    let journeyDuration = 0;
     let journeyIndex = 0;
     let journeyPaused = false;
     const venueCoordinates = new Map(Object.entries({
@@ -2494,36 +2502,17 @@
       activeAmapFilter = filter;
       amapOverlays.forEach(marker => amap.remove(marker));
       const visibleTours = filter === 'all' ? (window.__tourData || []) : (window.__tourData || []).filter(tour => tour.status === filter);
-      const candyMode = amap.getZoom() >= 7;
-      if (candyMode) {
-        const groups = [...visibleTours.reduce((result, tour) => {
-          const key = `${tour.city}|${tour.venue}`;
-          const group = result.get(key) || { city: tour.city, venue: tour.venue, count: 0 };
-          group.count += 1;
-          result.set(key, group);
-          return result;
-        }, new Map()).values()];
-        amapOverlays = groups.map(group => {
-          const position = venueCoordinates.get(`${group.city}|${group.venue}`) || amapCoordinates[group.city];
-          const content = `<button class="amap-city-marker is-candy" aria-label="${group.city}${group.venue}，${group.count}场演出"><span aria-hidden="true">🍬</span><b title="${group.venue}">${group.venue}</b></button>`;
-          const marker = new amapApi.Marker({ position, anchor: 'center', content, title: `${group.city} · ${group.venue}`, zIndex: 110 });
-          marker.on('click', () => window.__openCityModal?.(group.city));
-          return marker;
-        });
-      } else {
-        const counts = visibleTours.reduce((result, tour) => {
-          result[tour.city] = (result[tour.city] || 0) + 1;
-          return result;
-        }, {});
-        const maxCount = Math.max(...Object.values(counts), 1);
-        amapOverlays = Object.entries(counts).map(([city, count]) => {
-          const size = 25 + count / maxCount * 31;
-          const content = `<button class="amap-city-marker" style="--bubble-size:${size}px" aria-label="查看${city}${count}场演出"><span>${count}</span><b>${city}</b></button>`;
-          const marker = new amapApi.Marker({ position: amapCoordinates[city], anchor: 'center', content, zIndex: 110 });
-          marker.on('click', () => window.__openCityModal?.(city));
-          return marker;
-        });
-      }
+      const cities = [...visibleTours.reduce((result, tour) => {
+        if (!result.has(tour.city)) result.set(tour.city, { city: tour.city, count: 0 });
+        result.get(tour.city).count += 1;
+        return result;
+      }, new Map()).values()];
+      amapOverlays = cities.map(({ city, count }) => {
+        const content = `<button class="amap-city-marker is-candy" aria-label="查看${city}${count}场演出"><span aria-hidden="true">🍬</span></button>`;
+        const marker = new amapApi.Marker({ position: amapCoordinates[city], anchor: 'center', content, title: `${city} · ${count}场演出`, zIndex: 110 });
+        marker.on('click', () => window.__openCityModal?.(city));
+        return marker;
+      });
       amap.add(amapOverlays);
     }
 
@@ -2538,7 +2527,11 @@
           resizeEnable: true,
           viewMode: '2D'
         });
-        amap.on('complete', () => amapCanvas.classList.add('amap-ready'));
+        amap.on('complete', () => {
+          amapCanvas.classList.add('amap-ready');
+          document.querySelector('#route-layer').style.display = 'none';
+          drawAmapTourRoute();
+        });
         amap.on('zoomend', () => renderAmap(activeAmapFilter));
         window.__renderAmapFilter = renderAmap;
         renderAmap();
@@ -2555,13 +2548,18 @@
     }
 
     function getTourRouteCities() {
-      return (window.__tourData || [])
+      return getChronologicalTours()
         .map(tour => tour.city)
         .filter((city, index, cities) => amapCoordinates[city] && (index === 0 || city !== cities[index - 1]));
     }
 
+    function getChronologicalTours(list = window.__tourData || []) {
+      const sessionOrder = { '午场': 0, '晚场': 1 };
+      return [...list].sort((a, b) => Number(a.date.replace('.', '')) - Number(b.date.replace('.', '')) || (sessionOrder[a.session] ?? 2) - (sessionOrder[b.session] ?? 2) || a.id - b.id);
+    }
+
     function getAmapTourRoute() {
-      return (window.__tourData || []).reduce((route, tour) => {
+      return getChronologicalTours().reduce((route, tour) => {
         const position = venueCoordinates.get(`${tour.city}|${tour.venue}`) || amapCoordinates[tour.city];
         const previous = route.at(-1);
         if (position && (!previous || previous[0] !== position[0] || previous[1] !== position[1])) {
@@ -2571,16 +2569,39 @@
       }, []);
     }
 
+    function drawAmapTourRoute() {
+      if (!amap || !amapApi) return;
+      if (amapTourRoute) amap.remove(amapTourRoute);
+      const path = getAmapTourRoute();
+      if (path.length < 2) return;
+      amapTourRoute = new amapApi.Polyline({
+        path,
+        strokeColor: '#7bb9ec',
+        strokeOpacity: .95,
+        strokeWeight: 3,
+        strokeStyle: 'dashed',
+        strokeDasharray: [8, 6],
+        lineJoin: 'round',
+        lineCap: 'round',
+        zIndex: 80
+      });
+      amap.add(amapTourRoute);
+    }
+
     function clearJourney() {
       clearInterval(journeyTimer);
       journeyTimer = null;
-      if (journeyMode === 'amap' && amap && journeyMarker) {
+      if (journeyMode === 'amap-dom') {
+        journeyMarker?.remove?.();
+      } else if (journeyMode === 'amap' && amap && journeyMarker) {
         journeyMarker.stopMove?.();
         amap.remove(journeyMarker);
       } else {
         journeyMarker?.remove?.();
       }
-      if (journeyRoute && amap) amap.remove(journeyRoute);
+      cancelAnimationFrame(journeyAnimationFrame);
+      journeyAnimationFrame = null;
+      if (journeyRoute && journeyRoute !== amapTourRoute && amap) amap.remove(journeyRoute);
       journeyMarker = null;
       journeyRoute = null;
       journeyMode = 'static';
@@ -2632,33 +2653,55 @@
     }
 
     function playAmapJourney() {
-      journeyMode = 'amap';
+      journeyMode = 'amap-dom';
       const path = getAmapTourRoute();
       if (path.length < 2) return;
-      journeyRoute = new amapApi.Polyline({
+      journeyRoute = amapTourRoute || new amapApi.Polyline({
         path,
-        strokeColor: '#D87D91',
-        strokeOpacity: .88,
-        strokeWeight: 4,
-        strokeStyle: 'solid',
-        showDir: true,
+        strokeColor: '#7bb9ec',
+        strokeOpacity: .95,
+        strokeWeight: 3,
+        strokeStyle: 'dashed',
+        strokeDasharray: [8, 6],
         lineJoin: 'round',
         lineCap: 'round',
-        zIndex: 105
+        zIndex: 80
       });
-      journeyMarker = new amapApi.Marker({
-        position: path[0],
-        anchor: 'center',
-        content: `<div class="journey-candy" role="img" aria-label="移动中的糖果屋">${candyHouseSvg()}</div>`,
-        offset: new amapApi.Pixel(-28, -28),
-        zIndex: 150
-      });
-      amap.add([journeyRoute, journeyMarker]);
-      amap.setFitView([journeyRoute, journeyMarker], false, [64, 64, 64, 64], 5);
-      amapApi.plugin('AMap.MoveAnimation', () => {
-        journeyMarker.on('moveend', () => finishJourney(getTourRouteCities()));
-        journeyMarker.moveAlong(path, { duration: Math.max(4000, path.length * 720), autoRotation: false });
-      });
+      if (!amapTourRoute) {
+        amapTourRoute = journeyRoute;
+        amap.add(amapTourRoute);
+      }
+      journeyMarker = document.createElement('div');
+      journeyMarker.className = 'amap-journey-marker';
+      journeyMarker.setAttribute('role', 'img');
+      journeyMarker.setAttribute('aria-label', '移动中的糖果屋');
+      journeyMarker.innerHTML = `<div class="journey-candy">${candyHouseSvg()}</div>`;
+      amapContainer.appendChild(journeyMarker);
+      amap.add(journeyRoute);
+      amap.setFitView([journeyRoute], false, [64, 64, 64, 64], 5);
+      journeyDuration = Math.max(4000, path.length * 720);
+      journeyElapsed = 0;
+      journeyStartedAt = performance.now();
+      const positionMarker = point => {
+        const pixel = amap.lngLatToContainer(point);
+        journeyMarker.style.left = `${pixel.x}px`;
+        journeyMarker.style.top = `${pixel.y}px`;
+      };
+      const animate = now => {
+        if (!journeyMarker) return;
+        if (!journeyPaused) journeyElapsed = Math.min(journeyDuration, journeyElapsed + now - journeyStartedAt);
+        journeyStartedAt = now;
+        const progress = journeyElapsed / journeyDuration;
+        const segment = Math.min(path.length - 2, Math.floor(progress * (path.length - 1)));
+        const segmentProgress = progress * (path.length - 1) - segment;
+        const from = path[segment];
+        const to = path[Math.min(segment + 1, path.length - 1)];
+        positionMarker([from[0] + (to[0] - from[0]) * segmentProgress, from[1] + (to[1] - from[1]) * segmentProgress]);
+        if (journeyElapsed < journeyDuration) journeyAnimationFrame = requestAnimationFrame(animate);
+        else finishJourney(getTourRouteCities());
+      };
+      positionMarker(path[0]);
+      journeyAnimationFrame = requestAnimationFrame(animate);
     }
 
     function playCandyJourney() {
