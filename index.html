@@ -58,7 +58,9 @@
     .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
     .lenis.lenis-stopped { overflow: hidden; }
     .text-char, .text-word { display: inline-block; will-change: transform, opacity; }
-    .text-line { overflow: hidden; }
+    .text-line { overflow: visible !important; }
+    #hero-title em, .map-page-title em, .calendar-title em { white-space: nowrap; }
+    .map-page-title, .calendar-title { line-height: 1.08; }
     body {
       margin: 0;
       color: var(--ink);
@@ -1208,7 +1210,9 @@
     .amap-city-marker { display: grid; place-items: center; width: var(--bubble-size); height: var(--bubble-size); padding: 0; border: 1px solid rgba(255,255,255,.95); border-radius: 50%; color: white; background: linear-gradient(145deg, #e9979e, #b85e73); box-shadow: 0 5px 16px rgba(151,81,94,.28), 0 0 0 5px rgba(247,123,155,.12); font-family: var(--mono); font-size: 10px; cursor: pointer; }
     .amap-city-marker:hover, .amap-city-marker:focus-visible { outline: none; transform: scale(1.12); box-shadow: 0 6px 18px rgba(151,81,94,.32), 0 0 0 7px rgba(247,123,155,.16); }
     .amap-city-marker b { position: absolute; top: calc(100% + 7px); left: 50%; color: var(--ink); font-family: var(--sans); font-size: 11px; font-weight: 400; white-space: nowrap; transform: translateX(-50%); }
-    .amap-city-marker.is-candy, .amap-city-marker.is-candy span { width: auto; height: auto; border: 0; border-radius: 0; color: initial; background: transparent; box-shadow: none; transform: none; font-family: sans-serif; font-size: 25px; line-height: 1; }
+    .amap-city-marker.is-candy { width: 32px; height: 32px; border: 0; border-radius: 0; color: initial; background: transparent; box-shadow: none; transform: none; font-family: sans-serif; line-height: 1; }
+    .amap-city-marker.is-candy span { display: block; width: auto; height: auto; border: 0; border-radius: 0; color: initial; background: transparent; box-shadow: none; font-size: 25px; line-height: 1; filter: drop-shadow(0 2px 2px rgba(83,62,57,.25)); }
+    .amap-city-marker.is-candy:hover span, .amap-city-marker.is-candy:focus-visible span { transform: scale(1.15); }
     .amap-city-marker.is-candy b { top: calc(100% + 7px); max-width: 150px; padding: 3px 6px; border-radius: 5px; overflow: hidden; color: var(--ink); background: rgba(255,248,242,.9); font-size: 10px; text-overflow: ellipsis; transform: translateX(-50%); }
     .amap-route-line { stroke: #9CD4F6; stroke-dasharray: 7 4; filter: drop-shadow(0 2px 3px rgba(89,166,213,.25)); }
     .candy-house-icon { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 3px 3px rgba(83,62,57,.24)); }
@@ -1558,7 +1562,7 @@
       { id: 78, city: '南京', date: '06.07', session: '晚场', venue: '南京保利大剧院大剧场' },
       { id: 79, city: '太仓', date: '06.12', session: '晚场', venue: '太仓大剧院' },
       { id: 80, city: '张家港', date: '06.13', session: '晚场', venue: '张家港保利大剧院' },
-      { id: 81, city: '绍兴', date: '06.14', session: '午场', venue: '金河桥大剧院' },
+      { id: 81, city: '绍兴', date: '06.14', session: '午场', venue: '金柯桥大剧院' },
       { id: 82, city: '济南', date: '06.18', session: '晚场', venue: '济南历山剧院' },
       { id: 83, city: '济南', date: '06.19', session: '午场', venue: '济南历山剧院' },
       { id: 84, city: '济南', date: '06.19', session: '晚场', venue: '济南历山剧院' },
@@ -1847,8 +1851,8 @@
                   <div class="modal-id-no">NO.${id}</div>
                 </div>
                 <div class="modal-ticket-brand">
-                  <span>2026 THEATRE PASS</span>
-                  <strong>唐香玉《糖》巡演入场券</strong>
+                  <span>2026 KATRINA TANG STAND-UP SPECIAL</span>
+                  <strong>唐香玉《糖》单口喜剧专场</strong>
                 </div>
                 <span class="modal-status ${isUpcoming ? 'upcoming' : ''}">
                   <span class="modal-status-dot"></span>
@@ -2405,7 +2409,62 @@
     let amapRoute;
     let journeyMarker;
     let activeAmapFilter = 'all';
-    const venueCoordinates = new Map();
+    const venueCoordinates = new Map(Object.entries({
+      '苏州|苏州保利大剧院大剧场': [120.6314, 31.265489],
+      '苏州|苏州狮山大剧院大剧场': [120.547725, 31.291795],
+      '上海|上海云峰剧院': [121.443016, 31.226246],
+      '南京|南京文化艺术中心大剧院': [118.787611, 32.044346],
+      '常州|常州大剧院': [119.975834, 31.807987],
+      '无锡|无锡市人民大会堂': [120.304437, 31.554635],
+      '淄博|淄博保利大剧院歌剧厅': [117.988851, 36.825988],
+      '天津|天津大礼堂大剧院': [117.2033, 39.086825],
+      '上海|九棵树未来艺术中心-大剧场': [121.485053, 30.940515],
+      '武汉|武汉剧院': [114.287866, 30.587565],
+      '南京|南京保利大剧院大剧场': [118.708459, 31.991517],
+      '深圳|南山文体中心聚橙剧院': [113.922838, 22.53638],
+      '珠海|珠海华发中演大剧院': [113.526389, 22.173163],
+      '广州|广州蓓蕾剧院': [113.253105, 23.134366],
+      '贵阳|贵州饭店国际会议中心大礼堂': [106.708419, 26.595571],
+      '重庆|重庆大剧院': [106.581333, 29.569832],
+      '成都|成都高新中演剧院': [104.051708, 30.544038],
+      '南通|南通大剧院': [120.941173, 31.966571],
+      '宁波|宁波文化广场大剧院': [121.619812, 29.85819],
+      '石家庄|石家庄艺术中心大剧院': [114.481692, 38.036407],
+      '太原|太原青年宫演艺中心': [112.541808, 37.874423],
+      '嘉兴|嘉兴大剧院': [120.759434, 30.737926],
+      '太仓|太仓大剧院': [121.130562, 31.455541],
+      '张家港|张家港保利大剧院': [120.575389, 31.868549],
+      '深圳|南山文体中心聚橙剧院大剧院': [113.922838, 22.53638],
+      '东莞|聚橙院线东城影剧院': [113.781392, 23.025855],
+      '江门|江门演艺中心侨都大剧院': [113.106109, 22.59247],
+      '青岛|青岛李沧剧院': [120.382629, 36.192519],
+      '洛阳|洛阳新区歌剧院': [112.453522, 34.625059],
+      '郑州|河南省人民会堂': [113.683593, 34.764433],
+      '慈溪|慈溪大剧院-大剧场': [121.281497, 30.202472],
+      '丽水|丽水大剧院': [119.924948, 28.465256],
+      '靖江|靖江大剧院': [120.282057, 31.979553],
+      '西安|西演SPACE-易俗大剧院': [108.94955, 34.261424],
+      '武汉|湖北剧院': [114.304529, 30.541022],
+      '南昌|昌南文化中心大剧院5号馆': [115.842228, 28.559987],
+      '福州|福建会堂': [119.29247, 26.094636],
+      '温州|温州高新文化广场': [120.813958, 27.936572],
+      '厦门|厦门歌舞剧院': [118.088452, 24.458733],
+      '常熟|常熟大剧院': [120.779723, 31.660917],
+      '沈阳|辽宁中华剧场': [123.405014, 41.788467],
+      '哈尔滨|哈尔滨国际会展体育中心环球剧场': [126.698384, 45.753204],
+      '北京|北京喜剧院': [116.432954, 39.930267],
+      '杭州|杭州大剧院': [120.215108, 30.24404],
+      '上海|艺海剧院-大剧场': [121.452228, 31.235073],
+      '佛山|琼花大剧院': [113.111798, 23.031968],
+      '北京|华侨城大剧院': [116.49837, 39.867245],
+      '绍兴|金柯桥大剧院': [120.49151, 30.082563],
+      '济南|济南历山剧院': [117.040748, 36.66088],
+      '天津|津湾大剧院': [117.209682, 39.13263],
+      '上海|上海宛平剧院': [121.451169, 31.185071],
+      '长沙|湖南大剧院大剧场': [112.997683, 28.189723],
+      '滁州|天长文化艺术中心大剧院': [119.006231, 32.658656],
+      '长春|长春国际会展中心': [125.394548, 43.838617]
+    }));
     const journeyButton = document.querySelector('#candy-journey');
     const journeyActions = document.querySelector('#journey-actions');
     const pauseJourneyButton = document.querySelector('#journey-pause');
@@ -2440,49 +2499,7 @@
     }
 
     function venueMarkerContent(city, venue, count) {
-      return `<button class="amap-city-marker is-candy" aria-label="${city}${venue}，${count}场演出"><span>${candyHouseSvg()}</span><b title="${venue}">${venue}</b></button>`;
-    }
-
-    function geocodeVenueLocations(tours) {
-      const venues = [...new Map(tours.map(tour => [getVenueKey(tour), tour])).values()];
-      return new Promise(resolve => {
-        let settled = false;
-        const finish = () => {
-          if (settled) return;
-          settled = true;
-          venues.forEach(tour => {
-            const key = getVenueKey(tour);
-            if (!venueCoordinates.has(key)) venueCoordinates.set(key, amapCoordinates[tour.city]);
-          });
-          resolve();
-        };
-        const timeout = setTimeout(finish, 5000);
-        amapApi.plugin('AMap.Geocoder', () => {
-          try {
-            const geocoder = new amapApi.Geocoder();
-            let remaining = venues.length;
-            if (!remaining) {
-              clearTimeout(timeout);
-              finish();
-              return;
-            }
-            venues.forEach(tour => {
-              const key = getVenueKey(tour);
-              geocoder.getLocation(`${tour.city}${tour.venue}`, (status, result) => {
-                const location = status === 'complete' && result.geocodes?.[0]?.location;
-                venueCoordinates.set(key, location ? [location.lng, location.lat] : amapCoordinates[tour.city]);
-                if (--remaining === 0) {
-                  clearTimeout(timeout);
-                  finish();
-                }
-              });
-            });
-          } catch (error) {
-            clearTimeout(timeout);
-            finish();
-          }
-        });
-      });
+      return `<button class="amap-city-marker is-candy" aria-label="${city}${venue}，${count}场演出"><span aria-hidden="true">🍬</span><b title="${venue}">${venue}</b></button>`;
     }
 
     function updateAmapMarkerMode() {
@@ -2622,9 +2639,6 @@
         window.__renderAmapFilter = renderAmap;
         renderAmap();
         amapCanvas.classList.add('amap-ready');
-        geocodeVenueLocations(window.__tourData || []).then(() => {
-          if (amap.getZoom() >= 7) renderAmap(activeAmapFilter, false);
-        });
       } catch (error) {
         console.warn('高德地图加载失败，已保留本地地图占位层。', error);
       }
