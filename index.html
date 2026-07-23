@@ -1211,15 +1211,15 @@
     .amap-city-marker { display: grid; place-items: center; width: var(--bubble-size); height: var(--bubble-size); padding: 0; border: 1px solid rgba(255,255,255,.95); border-radius: 50%; color: white; background: linear-gradient(145deg, #e9979e, #b85e73); box-shadow: 0 5px 16px rgba(151,81,94,.28), 0 0 0 5px rgba(247,123,155,.12); font-family: var(--mono); font-size: 10px; cursor: pointer; }
     .amap-city-marker:hover, .amap-city-marker:focus-visible { outline: none; transform: scale(1.12); box-shadow: 0 6px 18px rgba(151,81,94,.32), 0 0 0 7px rgba(247,123,155,.16); }
     .amap-city-marker b { position: absolute; top: calc(100% + 7px); left: 50%; color: var(--ink); font-family: var(--sans); font-size: 11px; font-weight: 400; white-space: nowrap; transform: translateX(-50%); }
-    .amap-city-marker.is-candy { width: 32px; height: 32px; border: 0; border-radius: 0; color: initial; background: transparent; box-shadow: none; transform: none; font-family: sans-serif; line-height: 1; }
-    .amap-city-marker.is-candy span { display: block; width: auto; height: auto; border: 0; border-radius: 0; color: initial; background: transparent; box-shadow: none; font-size: 25px; line-height: 1; filter: drop-shadow(0 2px 2px rgba(83,62,57,.25)); }
-    .amap-city-marker.is-candy:hover span, .amap-city-marker.is-candy:focus-visible span { transform: scale(1.15); }
+    .amap-city-marker.is-candy { display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 0; color: initial; background: transparent; box-shadow: none; transform: none; font-family: sans-serif; line-height: 1; }
+    .amap-city-marker.is-candy span { display: block; width: 25px; height: 25px; border: 0; border-radius: 0; color: initial; background: transparent; box-shadow: none; font-size: 25px; line-height: 1; filter: drop-shadow(0 2px 2px rgba(83,62,57,.25)); transform: scale(var(--candy-scale, 1)); transform-origin: center; }
+    .amap-city-marker.is-candy:hover span, .amap-city-marker.is-candy:focus-visible span { transform: scale(calc(var(--candy-scale, 1) * 1.15)); }
     .amap-city-marker.is-candy b { top: calc(100% + 7px); max-width: 150px; padding: 3px 6px; border-radius: 5px; overflow: hidden; color: var(--ink); background: rgba(255,248,242,.9); font-size: 10px; text-overflow: ellipsis; transform: translateX(-50%); }
     .amap-route-line { stroke: #9CD4F6; stroke-dasharray: 7 4; filter: drop-shadow(0 2px 3px rgba(89,166,213,.25)); }
     .candy-house-icon { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 3px 3px rgba(83,62,57,.24)); }
-    .journey-candy { display: block; width: 56px; height: 56px; pointer-events: none; }
+    .journey-candy { display: block; width: 56px; height: 56px; pointer-events: none; transform: scale(var(--candy-scale, 1)); transform-origin: center; }
     .journey-candy .candy-house-icon { width: 56px; height: 56px; transform-origin: 50% 88%; animation: candy-house-bob .75s ease-in-out infinite alternate; }
-    .amap-journey-marker { position: absolute; z-index: 160; width: 56px; height: 56px; pointer-events: none; transform: translate(-50%, -50%); filter: drop-shadow(0 4px 5px rgba(83,62,57,.25)); }
+    .amap-journey-marker { display: block; width: 56px; height: 56px; pointer-events: none; filter: drop-shadow(0 4px 5px rgba(83,62,57,.25)); }
     .map-journey-marker { position: absolute; z-index: 5; width: 52px; height: 52px; pointer-events: none; transform: translate(-50%, -50%); transition: left .36s ease-in-out, top .36s ease-in-out; filter: drop-shadow(0 4px 5px rgba(83,62,57,.22)); }
     .map-journey-marker .candy-house-icon { transform-origin: 50% 88%; animation: candy-house-bob .75s ease-in-out infinite alternate; }
     @keyframes candy-house-bob { to { transform: translateY(-3px) rotate(1.5deg); } }
@@ -1244,7 +1244,7 @@
     .map-canvas::after { content: 'CHINA / TOUR ROUTE'; position: absolute; z-index: 3; right: 24px; bottom: 22px; color: rgba(137,111,105,.55); font-family: var(--mono); font-size: 9px; letter-spacing: .12em; pointer-events: none; }
     .map-grid { position: absolute; z-index: 1; inset: 0; opacity: .22; background-image: linear-gradient(rgba(137,111,105,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(137,111,105,.14) 1px, transparent 1px); background-size: 11% 16%; mask-image: linear-gradient(transparent, black 18%, black 82%, transparent); }
     .route-layer { position: absolute; z-index: 3; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-    .route-line { fill: none; stroke: #9CD4F6; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: .78; filter: drop-shadow(0 1px 2px rgba(89,166,213,.22)); }
+    .route-line { fill: none; stroke: #9CD4F6; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0; filter: drop-shadow(0 1px 2px rgba(89,166,213,.22)); }
     .map-points { position: absolute; z-index: 4; inset: 0; }
     .map-city { position: absolute; display: grid; place-items: center; width: var(--bubble-size); height: var(--bubble-size); padding: 0; border: 1px solid rgba(255,255,255,.96); border-radius: 50%; color: white; background: linear-gradient(145deg, #d98791, #b66073); box-shadow: 0 4px 12px rgba(151,81,94,.2), 0 0 0 4px rgba(247,123,155,.08); font-family: var(--mono); font-size: 9px; font-weight: 500; transform: translate(-50%, -50%); transition: transform .2s, box-shadow .2s; }
     .map-city:hover, .map-city:focus-visible { z-index: 3; outline: none; transform: translate(-50%, -50%) scale(1.16); box-shadow: 0 6px 18px rgba(151,81,94,.32), 0 0 0 7px rgba(247,123,155,.16); }
@@ -1402,7 +1402,7 @@
                 <div class="map-points" id="map-points"></div>
               </div>
               <div class="map-footer-tools">
-                <div class="map-legend"><span><i class="legend-dot"></i>城市场次</span><span><i class="legend-candy">🍬</i>糖果屋沿路线出发</span></div>
+                <div class="map-legend"><span><i class="legend-dot"></i>城市场次</span><span><i class="legend-candy">🍬</i>放大显示糖果</span></div>
                 <button class="candy-journey" id="candy-journey" type="button" aria-pressed="false"><span class="candy-journey-avatar"><svg class="candy-house-icon" viewBox="0 0 100 100" role="img" aria-label="Q版糖果屋"><path d="M17 48 50 16l33 32v37H17Z" fill="#A95E2B" stroke="#75452B" stroke-width="3"/><path d="M11 49 50 10l39 39-6 7L50 23 17 56Z" fill="#9CD4F6" stroke="#6D9FBE" stroke-width="3" stroke-linejoin="round"/><path d="M17 53 24 45l7 7 7-8 7 7 8-8 7 8 8-7 8 8 7-7 6 8v10H17Z" fill="#BDE8FA" stroke="#8ABED8" stroke-width="2"/><path d="M42 85V67q0-8 8-8t8 8v18Z" fill="#DDECF1" stroke="#75452B" stroke-width="3"/><path d="M50 34c-4-7-15-3-12 5 2 5 8 8 12 11 4-3 10-6 12-11 3-8-8-12-12-5Z" fill="#9BD8CF" stroke="#6FABA7" stroke-width="2"/><path d="M23 82V58" fill="none" stroke="#F5D8B0" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="49" r="10" fill="#F28BAE" stroke="#C96486" stroke-width="2"/><path d="M16 45q7 7 14 0M14 50q9 7 18 0M16 55q7 6 14 0" fill="none" stroke="#FFF5F8" stroke-width="2" stroke-linecap="round"/><path d="m78 31 3.5 8 8.5 1-6.4 5.7 1.8 8.4-7.4-4.1-7.4 4.1 1.8-8.4-6.4-5.7 8.5-1Z" fill="#F6D36F" stroke="#C79B42" stroke-width="2" stroke-linejoin="round"/><path d="m78 34 2 4.5 5 .6-3.8 3.4 1.1 5-4.3-2.4-4.3 2.4 1.1-5-3.8-3.4 5-.6Z" fill="#FFEAA8" opacity=".82"/></svg></span><span><strong>让糖出发</strong><small>从首发站沿巡演轨迹走一遍</small></span><i aria-hidden="true">→</i></button>
                 <div class="journey-actions" id="journey-actions" hidden>
                   <button class="journey-control" id="journey-pause" type="button" aria-pressed="false">暂停</button>
@@ -2411,6 +2411,7 @@
     let amapOverlays = [];
     let activeAmapFilter = 'all';
     let journeyMarker;
+    let journeyMarkerContent;
     let journeyRoute;
     let amapTourRoute;
     let journeyMode = 'static';
@@ -2420,6 +2421,7 @@
     let journeyStartedAt = 0;
     let journeyDuration = 0;
     let journeyIndex = 0;
+    let journeyCurrentPosition = null;
     let journeyPaused = false;
     const venueCoordinates = new Map(Object.entries({
       '苏州|苏州保利大剧院大剧场': [120.6314, 31.265489],
@@ -2502,17 +2504,33 @@
       activeAmapFilter = filter;
       amapOverlays.forEach(marker => amap.remove(marker));
       const visibleTours = filter === 'all' ? (window.__tourData || []) : (window.__tourData || []).filter(tour => tour.status === filter);
-      const cities = [...visibleTours.reduce((result, tour) => {
-        if (!result.has(tour.city)) result.set(tour.city, { city: tour.city, count: 0 });
-        result.get(tour.city).count += 1;
-        return result;
-      }, new Map()).values()];
-      amapOverlays = cities.map(({ city, count }) => {
-        const content = `<button class="amap-city-marker is-candy" aria-label="查看${city}${count}场演出"><span aria-hidden="true">🍬</span></button>`;
-        const marker = new amapApi.Marker({ position: amapCoordinates[city], anchor: 'center', content, title: `${city} · ${count}场演出`, zIndex: 110 });
-        marker.on('click', () => window.__openCityModal?.(city));
-        return marker;
-      });
+      const showVenues = amap.getZoom() >= 7;
+      if (showVenues) {
+        const venueGroups = [...visibleTours.reduce((result, tour) => {
+          const position = venueCoordinates.get(`${tour.city}|${tour.venue}`);
+          if (!position) return result;
+          const key = `${tour.city}|${tour.venue}`;
+          if (!result.has(key)) result.set(key, { city: tour.city, venue: tour.venue, count: 0, position });
+          result.get(key).count += 1;
+          return result;
+        }, new Map()).values()];
+        amapOverlays = venueGroups.map(({ city, venue, count, position }) => {
+          const content = `<button class="amap-city-marker is-candy" style="--candy-scale:${getAmapCandyScale()}" aria-label="查看${city}${venue}${count}场演出"><span aria-hidden="true">🍬</span></button>`;
+          const marker = new amapApi.Marker({ position, anchor: 'center', content, title: `${city} · ${venue} · ${count}场演出`, zIndex: 110 });
+          marker.on('click', () => window.__openCityModal?.(city));
+          return marker;
+        });
+      } else {
+        const cityCounts = getCityCounts(visibleTours);
+        const maxCount = Math.max(...Object.values(cityCounts), 1);
+        amapOverlays = Object.entries(cityCounts).map(([city, count]) => {
+          const size = 25 + count / maxCount * 31;
+          const content = `<button class="amap-city-marker" style="--bubble-size:${size}px" aria-label="查看${city}${count}场演出"><span>${count}</span><b>${city}</b></button>`;
+          const marker = new amapApi.Marker({ position: amapCoordinates[city], anchor: 'center', content, title: `${city} · ${count}场演出`, zIndex: 100 });
+          marker.on('click', () => window.__openCityModal?.(city));
+          return marker;
+        });
+      }
       amap.add(amapOverlays);
     }
 
@@ -2560,7 +2578,7 @@
 
     function getAmapTourRoute() {
       return getChronologicalTours().reduce((route, tour) => {
-        const position = venueCoordinates.get(`${tour.city}|${tour.venue}`) || amapCoordinates[tour.city];
+        const position = venueCoordinates.get(`${tour.city}|${tour.venue}`);
         const previous = route.at(-1);
         if (position && (!previous || previous[0] !== position[0] || previous[1] !== position[1])) {
           route.push(position);
@@ -2569,15 +2587,26 @@
       }, []);
     }
 
+    function getAmapCandyScale() {
+      if (!amap) return 1;
+      return Math.min(1.3, Math.max(.8, 1 + (amap.getZoom() - 4.6) * .1));
+    }
+
+    function syncAmapJourneyMarker() {
+      if (!journeyMarker || journeyMode !== 'amap' || !journeyCurrentPosition) return;
+      journeyMarker.setPosition(journeyCurrentPosition);
+      journeyMarkerContent?.style.setProperty('--candy-scale', getAmapCandyScale());
+    }
+
     function drawAmapTourRoute() {
       if (!amap || !amapApi) return;
       if (amapTourRoute) amap.remove(amapTourRoute);
       const path = getAmapTourRoute();
       if (path.length < 2) return;
       amapTourRoute = new amapApi.Polyline({
-        path,
+        path: [path[0], path[0]],
         strokeColor: '#7bb9ec',
-        strokeOpacity: .95,
+        strokeOpacity: 0,
         strokeWeight: 3,
         strokeStyle: 'dashed',
         strokeDasharray: [8, 6],
@@ -2591,10 +2620,7 @@
     function clearJourney() {
       clearInterval(journeyTimer);
       journeyTimer = null;
-      if (journeyMode === 'amap-dom') {
-        journeyMarker?.remove?.();
-      } else if (journeyMode === 'amap' && amap && journeyMarker) {
-        journeyMarker.stopMove?.();
+      if (journeyMode === 'amap' && amap && journeyMarker) {
         amap.remove(journeyMarker);
       } else {
         journeyMarker?.remove?.();
@@ -2604,6 +2630,13 @@
       if (journeyRoute && journeyRoute !== amapTourRoute && amap) amap.remove(journeyRoute);
       journeyMarker = null;
       journeyRoute = null;
+      journeyCurrentPosition = null;
+      if (amapTourRoute) {
+        const first = getAmapTourRoute()[0];
+        if (first) amapTourRoute.setPath([first, first]);
+        amapTourRoute.setOptions({ strokeOpacity: 0 });
+      }
+      routeLines?.querySelector('.route-line')?.setAttribute('opacity', '0');
       journeyMode = 'static';
       journeyIndex = 0;
       journeyPaused = false;
@@ -2615,12 +2648,21 @@
       pauseJourneyButton.textContent = '暂停';
     }
 
+    function revealStaticRoute(route) {
+      const points = route.slice(0, journeyIndex + 1).map(city => cityCoordinates[city].join(','));
+      const line = routeLines?.querySelector('.route-line');
+      if (!line || !points.length) return;
+      line.setAttribute('points', points.join(' '));
+      line.setAttribute('opacity', points.length > 1 ? '.78' : '0');
+    }
+
     function moveStaticJourneyMarker(route) {
       const city = route[journeyIndex];
       const [left, top] = cityCoordinates[city];
       journeyMarker.style.left = `${left}%`;
       journeyMarker.style.top = `${top}%`;
       journeyMarker.setAttribute('aria-label', `糖果屋抵达${city}`);
+      revealStaticRoute(route);
     }
 
     function finishJourney(route) {
@@ -2653,39 +2695,36 @@
     }
 
     function playAmapJourney() {
-      journeyMode = 'amap-dom';
+      journeyMode = 'amap';
       const path = getAmapTourRoute();
       if (path.length < 2) return;
-      journeyRoute = amapTourRoute || new amapApi.Polyline({
-        path,
-        strokeColor: '#7bb9ec',
-        strokeOpacity: .95,
-        strokeWeight: 3,
-        strokeStyle: 'dashed',
-        strokeDasharray: [8, 6],
-        lineJoin: 'round',
-        lineCap: 'round',
-        zIndex: 80
-      });
-      if (!amapTourRoute) {
-        amapTourRoute = journeyRoute;
-        amap.add(amapTourRoute);
+      journeyRoute = amapTourRoute;
+      if (!journeyRoute) {
+        drawAmapTourRoute();
+        journeyRoute = amapTourRoute;
       }
-      journeyMarker = document.createElement('div');
-      journeyMarker.className = 'amap-journey-marker';
-      journeyMarker.setAttribute('role', 'img');
-      journeyMarker.setAttribute('aria-label', '移动中的糖果屋');
-      journeyMarker.innerHTML = `<div class="journey-candy">${candyHouseSvg()}</div>`;
-      amapContainer.appendChild(journeyMarker);
-      amap.add(journeyRoute);
-      amap.setFitView([journeyRoute], false, [64, 64, 64, 64], 5);
+      journeyRoute.setOptions({ strokeOpacity: .95 });
+      journeyRoute.setPath([path[0], path[0]]);
+      journeyMarkerContent = document.createElement('div');
+      journeyMarkerContent.className = 'amap-journey-marker';
+      journeyMarkerContent.setAttribute('role', 'img');
+      journeyMarkerContent.setAttribute('aria-label', '移动中的糖果屋');
+      journeyMarkerContent.innerHTML = `<div class="journey-candy">${candyHouseSvg()}</div>`;
+      journeyMarkerContent.style.setProperty('--candy-scale', getAmapCandyScale());
+      journeyMarker = new amapApi.Marker({
+        position: path[0],
+        anchor: 'center',
+        content: journeyMarkerContent,
+        zIndex: 160
+      });
+      amap.add(journeyMarker);
       journeyDuration = Math.max(4000, path.length * 720);
       journeyElapsed = 0;
       journeyStartedAt = performance.now();
-      const positionMarker = point => {
-        const pixel = amap.lngLatToContainer(point);
-        journeyMarker.style.left = `${pixel.x}px`;
-        journeyMarker.style.top = `${pixel.y}px`;
+      const positionMarker = (point, segment) => {
+        journeyCurrentPosition = point;
+        syncAmapJourneyMarker();
+        journeyRoute.setPath([...path.slice(0, segment + 1), point]);
       };
       const animate = now => {
         if (!journeyMarker) return;
@@ -2696,11 +2735,14 @@
         const segmentProgress = progress * (path.length - 1) - segment;
         const from = path[segment];
         const to = path[Math.min(segment + 1, path.length - 1)];
-        positionMarker([from[0] + (to[0] - from[0]) * segmentProgress, from[1] + (to[1] - from[1]) * segmentProgress]);
+        positionMarker([from[0] + (to[0] - from[0]) * segmentProgress, from[1] + (to[1] - from[1]) * segmentProgress], segment);
         if (journeyElapsed < journeyDuration) journeyAnimationFrame = requestAnimationFrame(animate);
-        else finishJourney(getTourRouteCities());
+        else {
+          journeyRoute.setPath(path);
+          finishJourney(getTourRouteCities());
+        }
       };
-      positionMarker(path[0]);
+      positionMarker(path[0], 0);
       journeyAnimationFrame = requestAnimationFrame(animate);
     }
 
