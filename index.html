@@ -2409,12 +2409,17 @@
     window.__tourData = tours;
     window.__openCityModal = openCityModal;
   </script>
-  <script src="./amap-runtime.js"></script>
   <script src="./gsap.min.js"></script>
   <script src="./SplitText.min.js"></script>
   <script src="./ScrollTrigger.min.js"></script>
   <script type="module">
     import Lenis from 'lenis';
+
+    const amapConfig = {
+      key: import.meta.env.VITE_AMAP_KEY || '',
+      securityJsCode: import.meta.env.VITE_AMAP_SECURITY_CODE || '',
+      styleId: import.meta.env.VITE_AMAP_STYLE_ID || 'whitesmoke'
+    };
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const lenis = reducedMotion.matches ? null : new Lenis({
@@ -2559,13 +2564,12 @@
     const cancelJourneyButton = document.querySelector('#journey-cancel');
 
     function loadAmap() {
-      const config = window.__AMAP_CONFIG__ || {};
-      if (!config.key) return Promise.reject(new Error('缺少高德地图 Key'));
-      if (config.securityJsCode) window._AMapSecurityConfig = { securityJsCode: config.securityJsCode };
+      if (!amapConfig.key) return Promise.reject(new Error('缺少高德地图 Key'));
+      if (amapConfig.securityJsCode) window._AMapSecurityConfig = { securityJsCode: amapConfig.securityJsCode };
       if (window.AMap) return Promise.resolve(window.AMap);
       return new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = `https://webapi.amap.com/maps?v=2.0&key=${encodeURIComponent(config.key)}`;
+        script.src = `https://webapi.amap.com/maps?v=2.0&key=${encodeURIComponent(amapConfig.key)}`;
         script.async = true;
         script.onload = () => resolve(window.AMap);
         script.onerror = () => reject(new Error('高德地图 JS 加载失败'));
@@ -2611,7 +2615,7 @@
     async function initAmap() {
       try {
         amapApi = await loadAmap();
-        const styleId = window.__AMAP_CONFIG__?.styleId || 'whitesmoke';
+        const styleId = amapConfig.styleId || 'whitesmoke';
         amap = new amapApi.Map(amapContainer, {
           zoom: 4.6,
           center: [109.5, 35.5],
