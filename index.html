@@ -186,7 +186,7 @@
     .poster-jar-neck { position: absolute; z-index: 2; top: 10px; left: 25px; width: 34px; height: 20px; border: 2px solid rgba(103,75,114,.45); border-bottom: 0; background: rgba(238,235,248,.48); }
     .poster-jar-glass { position: absolute; inset: 25px 3px 0; overflow: hidden; border: 2px solid rgba(103,75,114,.5); border-radius: 16px 16px 25px 25px; background: linear-gradient(115deg, rgba(255,255,255,.72) 0 15%, rgba(194,202,231,.42) 16% 74%, rgba(255,255,255,.55) 75% 82%, rgba(170,176,216,.36) 83%); box-shadow: inset 7px 0 rgba(255,255,255,.24), inset -5px -8px rgba(125,90,142,.09); }
     .poster-jar-glass::after { content: ''; position: absolute; z-index: 2; top: 10px; right: 9px; width: 8px; height: 43px; border-radius: 50%; background: rgba(255,255,255,.7); transform: rotate(-10deg); pointer-events: none; }
-    .poster-candy { position: absolute; width: var(--candy-size, 17px); height: var(--candy-size, 17px); border: 1px solid rgba(103,75,114,.25); border-radius: 50%; background: var(--candy-color); box-shadow: inset 5px 5px rgba(255,255,255,.32); }
+    .poster-candy { position: absolute; width: var(--candy-size, 17px); height: var(--candy-size, 17px); border: 1px solid rgba(103,75,114,.25); border-radius: 50%; background: var(--candy-color); box-shadow: inset 5px 5px rgba(255,255,255,.32); transform: translate(var(--gravity-x, 0px), var(--gravity-y, 0px)); transition: transform .15s ease-out; }
     @media (prefers-reduced-motion: reduce) { .poster-candy-jar, .poster-jar-lid { transition-duration: .01ms; } }
 
     .archive { position: relative; padding: 80px 42px 120px; background: var(--cream); }
@@ -1873,13 +1873,13 @@
                   <div class="modal-date">${month} / ${day}</div>
                 </div>
                 <div class="modal-field">
-                  <div class="modal-col-label">CURTAIN</div>
+                  <div class="modal-col-label">TIME</div>
                   <span class="modal-session ${isAfternoon ? 'afternoon' : ''}">
                     <span class="modal-session-dot"></span>${tour.session}
                   </span>
                 </div>
                 <div class="modal-field modal-field-venue">
-                  <div class="modal-col-label">GRAND SALON</div>
+                  <div class="modal-col-label">VENUE</div>
                   <div class="modal-venue">${tour.venue}</div>
                 </div>
                 <div class="modal-field modal-field-host">
@@ -1996,14 +1996,14 @@
       document.querySelector('#top-cities').innerHTML = topCities.map(([city, count], index) => `<li class="top-city"><span class="top-city-rank">0${index + 1}</span><strong>${city}</strong><span class="top-city-count">${count}场</span></li>`).join('');
     }
 
-    function openCityModal(city) {
+    function openCityModal(city, venue = '') {
       const cityTours = tours
-        .filter(tour => tour.city === city)
+        .filter(tour => tour.city === city && (!venue || tour.venue === venue))
         .sort((a, b) => {
           const statusOrder = Number(b.status === 'upcoming') - Number(a.status === 'upcoming');
           return statusOrder || a.id - b.id;
         });
-      modalTitle.textContent = city;
+      modalTitle.textContent = venue || city;
       modalList.innerHTML = cityTours.map(tour => `<div class="modal-show"><span class="modal-show-date">${tour.date} / 2026</span><span class="modal-show-session">${tour.session}</span><span class="modal-show-status ${tour.status}">${tour.statusText}</span></div>`).join('');
       mapModal.classList.add('visible');
     }
@@ -2329,6 +2329,80 @@
     fillCandyJar();
     candyPhysics = createCandyPhysics();
 
+    function initGyroscopeEffect() {
+      if (!candyGlass) return;
+      const heroPoster = document.querySelector('.hero-poster');
+      if (!heroPoster) return;
+
+      let gravityX = 0;
+      let gravityY = 0;
+      const maxGravity = 6;
+      const lerpFactor = 0.08;
+
+      function applyGravity() {
+        if (jarOpen) {
+          candyGlass.style.setProperty('--gravity-x', '0px');
+          candyGlass.style.setProperty('--gravity-y', '0px');
+          return;
+        }
+        const currentX = parseFloat(candyGlass.style.getPropertyValue('--gravity-x') || '0');
+        const currentY = parseFloat(candyGlass.style.getPropertyValue('--gravity-y') || '0');
+        const easedX = currentX + (gravityX - currentX) * lerpFactor;
+        const easedY = currentY + (gravityY - currentY) * lerpFactor;
+        candyGlass.style.setProperty('--gravity-x', `${easedX}px`);
+        candyGlass.style.setProperty('--gravity-y', `${easedY}px`);
+        requestAnimationFrame(applyGravity);
+      }
+      applyGravity();
+
+      let deviceOrientationSupported = false;
+      if (window.DeviceOrientationEvent) {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          const handleClick = () => {
+            DeviceOrientationEvent.requestPermission()
+              .then(permissionState => {
+                if (permissionState === 'granted') {
+                  deviceOrientationSupported = true;
+                }
+              })
+              .catch(() => {});
+            document.removeEventListener('click', handleClick);
+          };
+          document.addEventListener('click', handleClick);
+        } else {
+          deviceOrientationSupported = true;
+        }
+      }
+
+      if (deviceOrientationSupported) {
+        window.addEventListener('deviceorientation', event => {
+          if (jarOpen) return;
+          const beta = event.beta || 0;
+          const gamma = event.gamma || 0;
+          gravityY = Math.max(-maxGravity, Math.min(maxGravity, (beta - 45) * 0.12));
+          gravityX = Math.max(-maxGravity, Math.min(maxGravity, gamma * 0.1));
+        });
+      }
+
+      heroPoster.addEventListener('mousemove', event => {
+        if (jarOpen) return;
+        const rect = heroPoster.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const deltaX = (event.clientX - centerX) / rect.width;
+        const deltaY = (event.clientY - centerY) / rect.height;
+        gravityX = deltaX * maxGravity;
+        gravityY = deltaY * maxGravity;
+      });
+
+      heroPoster.addEventListener('mouseleave', () => {
+        if (jarOpen) return;
+        gravityX = 0;
+        gravityY = 0;
+      });
+    }
+    initGyroscopeEffect();
+
     updateStats();
     renderMap();
     render();
@@ -2515,9 +2589,9 @@
           return result;
         }, new Map()).values()];
         amapOverlays = venueGroups.map(({ city, venue, count, position }) => {
-          const content = `<button class="amap-city-marker is-candy" style="--candy-scale:${getAmapCandyScale()}" aria-label="查看${city}${venue}${count}场演出"><span aria-hidden="true">🍬</span></button>`;
+          const content = `<button class="amap-city-marker is-candy" style="--candy-scale:${getAmapCandyScale()}" aria-label="查看${city}${venue}${count}场演出"><span aria-hidden="true">🍬</span><b>${venue}</b></button>`;
           const marker = new amapApi.Marker({ position, anchor: 'center', content, title: `${city} · ${venue} · ${count}场演出`, zIndex: 110 });
-          marker.on('click', () => window.__openCityModal?.(city));
+          marker.on('click', () => window.__openCityModal?.(city, venue));
           return marker;
         });
       } else {
