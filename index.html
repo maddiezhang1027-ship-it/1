@@ -10,6 +10,12 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Courier+Prime:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"></script>
   <style>
+    @font-face {
+      font-family: '尔雅新大黑';
+      src: local('尔雅新大黑'), local('Erya Xin Da Hei'), local('Erya New Big Black');
+      font-display: swap;
+    }
+
     :root {
       --paper: #f7ece7;
       --paper-deep: #efddd8;
@@ -59,6 +65,8 @@
     .lenis.lenis-stopped { overflow: hidden; }
     .text-char, .text-word { display: inline-block; will-change: transform, opacity; }
     .text-line { overflow: visible !important; }
+    #hero-title { font-family: '尔雅新大黑', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+    #hero-title .text-char { font-family: inherit; }
     #hero-title em, .map-page-title em, .calendar-title em { white-space: nowrap; }
     .map-page-title, .calendar-title { line-height: 1.08; }
     body {
@@ -1989,9 +1997,15 @@
 
     function updateStats() {
       const counts = getCityCounts(tours);
+      const cityWeights = tours.reduce((weights, tour) => {
+        weights[tour.city] = (weights[tour.city] || 0) + (tour.status === 'archived' ? 2 : 1);
+        return weights;
+      }, {});
       const upcoming = tours.filter(tour => tour.status === 'upcoming').length;
       const ended = tours.length - upcoming;
-      const topCities = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const topCities = Object.entries(counts)
+        .sort((a, b) => cityWeights[b[0]] - cityWeights[a[0]] || b[1] - a[1])
+        .slice(0, 5);
       document.querySelector('#stat-total-count').textContent = tours.length;
       document.querySelector('#stat-city-count').textContent = Object.keys(counts).length;
       document.querySelector('#stat-upcoming').textContent = `待演 ${upcoming}场`;
