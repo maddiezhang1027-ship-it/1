@@ -2650,8 +2650,14 @@
         window.__renderAmapFilter = renderAmap;
         renderAmap();
       } catch (error) {
-        console.warn('高德地图加载失败，继续使用本地静态地图。', error);
-        amapCanvas.classList.remove('amap-ready');
+        if (amap && window.AMap) {
+          amapCanvas.classList.add('amap-ready');
+          amapContainer.style.opacity = '1';
+          console.warn('地图已加载，部分附加效果初始化失败。', error);
+        } else {
+          console.warn('高德地图加载失败，继续使用本地静态地图。', error);
+          amapCanvas.classList.remove('amap-ready');
+        }
       }
     }
 
