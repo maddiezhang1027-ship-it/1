@@ -36,3 +36,7 @@ build/
 .cache/
 .parcel-cache/
 __test_open.png
+
+# Tencent Cloud EdgeOne
+.edgeone/
+.tef_dist/
