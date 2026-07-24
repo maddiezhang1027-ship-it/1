@@ -2638,7 +2638,11 @@
           document.querySelector('.map-grid')?.style.setProperty('display', 'none');
           document.querySelector('#map-points')?.style.setProperty('display', 'none');
           document.querySelector('#route-layer').style.display = 'none';
-          drawAmapTourRoute();
+          try {
+            drawAmapTourRoute();
+          } catch (error) {
+            console.warn('巡演路线绘制失败，地图与标记继续显示。', error);
+          }
         };
         amap.on('complete', markAmapReady);
         requestAnimationFrame(markAmapReady);
