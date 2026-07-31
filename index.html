@@ -1354,6 +1354,264 @@
       .footer { padding-top: 45px; }
     }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition-duration: .01ms !important; } }
+
+    /* ============================================
+       档案柜上锁：地图/档案柜/日历三板块透明模糊 + 锁头
+       柜子本身在锁定状态下保持闭合外观
+       ============================================ */
+    .site-shell.is-locked #map,
+    .site-shell.is-locked #archive,
+    .site-shell.is-locked #calendar,
+    body.is-locked #map,
+    body.is-locked #archive,
+    body.is-locked #calendar {
+      position: relative;
+    }
+    .site-shell.is-locked #map::after,
+    .site-shell.is-locked #archive::after,
+    .site-shell.is-locked #calendar::after,
+    body.is-locked #map::after,
+    body.is-locked #archive::after,
+    body.is-locked #calendar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px) saturate(.6);
+      -webkit-backdrop-filter: blur(14px) saturate(.6);
+      background: rgba(247, 236, 231, .35);
+      pointer-events: none;
+    }
+    .site-shell.is-locked .section-lock,
+    body.is-locked .section-lock {
+      display: block;
+    }
+    .section-lock {
+      display: none;
+      position: absolute;
+      z-index: 60;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 0;
+      pointer-events: none;
+      width: min(380px, 86%);
+    }
+    .section-lock-inner {
+      pointer-events: auto;
+      padding: 26px 30px 28px;
+      border: 1px solid rgba(125, 90, 142, .28);
+      border-radius: 18px;
+      background: rgba(255, 248, 242, .94);
+      box-shadow: 0 22px 50px rgba(75, 47, 65, .22), 0 4px 12px rgba(75, 47, 65, .12);
+      text-align: center;
+      backdrop-filter: blur(18px) saturate(1.1);
+      -webkit-backdrop-filter: blur(18px) saturate(1.1);
+      animation: lockFloat 3.6s ease-in-out infinite;
+    }
+    @keyframes lockFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .lock-emblem {
+      width: 56px;
+      height: 56px;
+      margin: 4px auto 10px;
+      filter: drop-shadow(0 4px 8px rgba(124, 88, 24, .28));
+    }
+    .lock-eyebrow {
+      margin: 0;
+      color: var(--archive-plum);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+    }
+    .lock-title {
+      margin: 6px 0 6px;
+      color: var(--ink);
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: .02em;
+    }
+    .lock-note {
+      margin: 0 auto 14px;
+      max-width: 320px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .lock-cta {
+      padding: 10px 22px;
+      border: 1px solid var(--archive-plum);
+      border-radius: 999px;
+      background: var(--archive-plum);
+      color: #f7f1e8;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      transition: transform .2s, box-shadow .2s, background .2s;
+    }
+    .lock-cta:hover {
+      transform: translateY(-1px);
+      background: #684d79;
+      box-shadow: 0 8px 20px rgba(125, 90, 142, .32);
+    }
+
+    /* 柜子闭合状态：覆盖所有 121 张纸页 + 隐藏底部黄签 */
+    .site-shell.is-locked .accordion-pages {
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height .6s cubic-bezier(.65,.05,.36,1), padding .6s cubic-bezier(.65,.05,.36,1), opacity .35s;
+    }
+    .site-shell.is-locked .accordion-file {
+      transform: rotateX(0deg);
+      transition: transform .6s cubic-bezier(.65,.05,.36,1);
+    }
+    .site-shell.is-locked .accordion-bottom::after {
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .site-shell.is-locked .filters,
+    .site-shell.is-locked .archive-note {
+      opacity: .35;
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+    .site-shell:not(.is-locked) .accordion-pages {
+      transition: max-height .7s cubic-bezier(.16,1,.3,1), padding .7s cubic-bezier(.16,1,.3,1), opacity .4s .1s;
+    }
+    .site-shell:not(.is-locked) .accordion-bottom::after {
+      transition: opacity .3s .4s;
+    }
+
+    /* 密码弹窗 */
+    .password-modal {
+      position: fixed;
+      z-index: 300;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(75, 47, 65, .42);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      animation: fadeIn .25s ease-out;
+    }
+    .password-modal[hidden] { display: none; }
+    .password-modal-card {
+      position: relative;
+      width: min(420px, 100%);
+      padding: 38px 36px 32px;
+      border: 1px solid rgba(125, 90, 142, .28);
+      border-radius: 18px;
+      background: var(--cream);
+      box-shadow: 0 30px 80px rgba(75, 47, 65, .32), 0 6px 16px rgba(75, 47, 65, .14);
+      text-align: center;
+      animation: cardIn .42s cubic-bezier(.18,.8,.24,1.2);
+    }
+    .password-modal .modal-close {
+      top: 14px;
+      right: 16px;
+    }
+    .password-hint {
+      max-width: 320px;
+      margin: -2px auto 22px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .password-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .password-field {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 4px 18px;
+      border: 1px solid rgba(125, 90, 142, .28);
+      border-radius: 999px;
+      background: rgba(255, 248, 242, .78);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .password-field:focus-within {
+      border-color: var(--archive-plum);
+      box-shadow: 0 0 0 4px rgba(125, 90, 142, .14);
+    }
+    .password-label {
+      color: var(--archive-plum);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .22em;
+    }
+    .password-input {
+      flex: 1;
+      min-width: 0;
+      padding: 12px 0;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 16px;
+      letter-spacing: .4em;
+    }
+    .password-input::placeholder { color: rgba(137, 111, 105, .55); letter-spacing: .25em; }
+    .password-error {
+      margin: -4px 0 0;
+      color: #b3323a;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      animation: shake .4s ease-in-out;
+    }
+    .password-submit {
+      align-self: center;
+      min-width: 180px;
+      padding: 12px 28px;
+      border: 1px solid var(--archive-plum);
+      border-radius: 999px;
+      background: var(--archive-plum);
+      color: #f7f1e8;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      transition: transform .2s, box-shadow .2s, background .2s;
+    }
+    .password-submit:hover {
+      transform: translateY(-1px);
+      background: #684d79;
+      box-shadow: 0 8px 20px rgba(125, 90, 142, .32);
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .site-shell.is-unlocking .accordion-file {
+      animation: cabinetUnlock 1s cubic-bezier(.16,1,.3,1);
+    }
+    @keyframes cabinetUnlock {
+      0% { transform: rotateX(0deg) scale(1); }
+      40% { transform: rotateX(-3deg) scale(1.015); }
+      100% { transform: rotateX(.8deg) scale(1); }
+    }
   </style>
 </head>
 <body>
@@ -1440,7 +1698,7 @@
       <section class="archive" id="archive" aria-labelledby="archive-title">
         <div class="archive-inner">
           <div class="archive-header">
-            <div><p class="section-kicker">The itinerary</p><h2 class="archive-title" id="archive-title">巡演档案柜 <span>/ 127 stops</span></h2></div>
+            <div><p class="section-kicker">The itinerary</p><h2 class="archive-title" id="archive-title">巡演档案柜 <span>/ <span id="archive-stops-count">0</span> stops</span></h2></div>
             <p class="archive-note">点击文件夹，<br>从档案中取出一张票根。</p>
           </div>
           <div class="filters" role="group" aria-label="筛选巡演状态"><button class="filter active" data-filter="all">全部</button><button class="filter" data-filter="upcoming">待演</button><button class="filter" data-filter="archived">已结束</button></div>
@@ -1449,17 +1707,17 @@
               <div class="accordion-top">
                 <div>
                   <div class="accordion-title">TANG ARCHIVE</div>
-                  <div class="accordion-sub">SECRET ARCHIVE · 127 STOPS</div>
+                  <div class="accordion-sub">SECRET ARCHIVE · <span id="accordion-stops">0</span> STOPS</div>
                 </div>
                 <div class="accordion-meta">
-                  <div><span class="accordion-meta-num">127</span> SHOWS</div>
+                  <div><span class="accordion-meta-num" id="accordion-shows">0</span> SHOWS</div>
                   <div>EST. 2026</div>
                 </div>
               </div>
               <div class="accordion-pages" id="cabinet-pages"></div>
               <div class="accordion-bottom">
                 <span class="accordion-foot"><span class="accordion-foot-key">SECRET</span> · CONFIDENTIAL</span>
-                <span class="accordion-foot">FILE NO. <span class="accordion-foot-key">001-127</span></span>
+                <span class="accordion-foot">FILE NO. <span class="accordion-foot-key" id="accordion-file-no">001-0</span></span>
               </div>
             </div>
           </div>
@@ -1494,6 +1752,51 @@
       <p class="modal-kicker">CITY SCHEDULE</p>
       <h2 class="modal-title" id="modal-title">城市场次</h2>
       <div class="modal-list" id="modal-list"></div>
+    </div>
+  </div>
+
+  <!-- 锁定覆盖层：仅在地图 / 档案柜 / 日历三板块显示透明模糊 + 锁头 -->
+  <div class="section-lock" id="section-lock" aria-hidden="true">
+    <div class="section-lock-inner">
+      <svg class="lock-emblem" viewBox="0 0 100 100" role="img" aria-label="档案柜锁定">
+        <defs>
+          <linearGradient id="lockBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#f6d36f"/>
+            <stop offset="1" stop-color="#b88a2c"/>
+          </linearGradient>
+          <linearGradient id="lockShackle" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#f7e6b0"/>
+            <stop offset="1" stop-color="#a07a2a"/>
+          </linearGradient>
+        </defs>
+        <path d="M30 46 V32 a20 20 0 0 1 40 0 v14" fill="none" stroke="url(#lockShackle)" stroke-width="7" stroke-linecap="round"/>
+        <rect x="22" y="46" width="56" height="42" rx="8" fill="url(#lockBody)" stroke="#7c5818" stroke-width="2"/>
+        <circle cx="50" cy="64" r="5" fill="#7c5818"/>
+        <rect x="48" y="66" width="4" height="12" rx="1.5" fill="#7c5818"/>
+        <path d="M16 88 H84" stroke="#7c5818" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+      </svg>
+      <p class="lock-eyebrow">SECRET ARCHIVE</p>
+      <h2 class="lock-title">档案柜已上锁</h2>
+      <p class="lock-note">请进入档案柜并输入密码解锁全部巡演内容</p>
+      <button class="lock-cta" id="lock-cta" type="button">前往档案柜解锁</button>
+    </div>
+  </div>
+
+  <!-- 密码输入弹窗 -->
+  <div class="password-modal" id="password-modal" role="dialog" aria-modal="true" aria-labelledby="password-title" hidden>
+    <div class="password-modal-card" data-lenis-prevent>
+      <button class="modal-close" id="password-close" type="button" aria-label="关闭密码弹窗">×</button>
+      <p class="modal-kicker">UNLOCK ARCHIVE</p>
+      <h2 class="modal-title" id="password-title">请输入档案柜密码</h2>
+      <p class="password-hint">正确输入密码后，地图 / 档案柜 / 日历将同步解锁</p>
+      <form class="password-form" id="password-form" autocomplete="off">
+        <label class="password-field">
+          <span class="password-label">PASSWORD</span>
+          <input class="password-input" id="password-input" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••" maxlength="20" />
+        </label>
+        <p class="password-error" id="password-error" hidden>密码不正确，请重试</p>
+        <button class="password-submit" type="submit">解锁</button>
+      </form>
     </div>
   </div>
 
@@ -1616,15 +1919,19 @@
       { id: 115, city: '南昌', date: '08.23', session: '晚场', venue: '昌南文化中心大剧院5号馆' },
       { id: 116, city: '长沙', date: '08.28', session: '晚场', venue: '湖南大剧院大剧场' },
       { id: 117, city: '长沙', date: '08.29', session: '晚场', venue: '湖南大剧院大剧场' },
-      { id: 118, city: '福州', date: '09.04', session: '晚场', venue: '福建会堂' },
-      { id: 119, city: '福州', date: '09.05', session: '晚场', venue: '福建会堂' },
+      { id: 118, city: '长沙', date: '08.30', session: '晚场', venue: '湖南大剧院大剧场' },
+      { id: 119, city: '福州', date: '09.04', session: '晚场', venue: '福建会堂' },
+      { id: 120, city: '福州', date: '09.05', session: '午场', venue: '福建会堂' },
+      { id: 121, city: '福州', date: '09.05', session: '晚场', venue: '福建会堂' },
       { id: 120, city: '温州', date: '09.06', session: '午场', venue: '温州高新文化广场' },
-      { id: 121, city: '厦门', date: '09.11', session: '晚场', venue: '厦门歌舞剧院' },
+      { id: 121, city: '温州', date: '09.06', session: '晚场', venue: '温州高新文化广场' },
+      { id: 122, city: '厦门', date: '09.11', session: '晚场', venue: '厦门歌舞剧院' },
       { id: 122, city: '合肥', date: '09.24', session: '晚场', venue: '安徽大剧院' },
       { id: 123, city: '滁州', date: '09.26', session: '晚场', venue: '天长文化艺术中心大剧院' },
       { id: 124, city: '常熟', date: '09.27', session: '晚场', venue: '常熟大剧院' },
       { id: 125, city: '苏州', date: '10', session: '待定', venue: '苏州狮山大剧院大剧场' },
       { id: 126, city: '沈阳', date: '10.16', session: '晚场', venue: '辽宁中华剧场' },
+      { id: 127, city: '大连', date: '10.18', session: '晚场', venue: '大冷文化宫' },
       { id: 127, city: '哈尔滨', date: '10.23', session: '晚场', venue: '哈尔滨国际会展体育中心环球剧场' },
       { id: 128, city: '长春', date: '10.25', session: '晚场', venue: '长春国际会展中心' }
     ];
@@ -1644,7 +1951,7 @@
       '张家港':'ZHANGJIAGANG','绍兴':'SHAOXING','东莞':'DONGGUAN','江门':'JIANGMEN',
       '青岛':'QINGDAO','洛阳':'LUOYANG','郑州':'ZHENGZHOU','慈溪':'CIXI','丽水':'LISHUI',
       '靖江':'JINGJIANG','西安':'XIAN','南昌':'NANCHANG','长沙':'CHANGSHA',
-      '福州':'FUZHOU','温州':'WENZHOU','合肥':'HEFEI','滁州':'CHUZHOU','厦门':'XIAMEN','常熟':'CHANGSHU','沈阳':'SHENYANG','哈尔滨':'HARBIN','长春':'CHANGCHUN'
+      '福州':'FUZHOU','温州':'WENZHOU','合肥':'HEFEI','滁州':'CHUZHOU','厦门':'XIAMEN','常熟':'CHANGSHU','沈阳':'SHENYANG','大连':'DALIAN','哈尔滨':'HARBIN','长春':'CHANGCHUN'
     };
     tours.forEach((tour, index) => {
       tour.id = index + 1;
@@ -1980,7 +2287,7 @@
       render();
     });
     const cityCoordinates = {
-      苏州: [57, 38], 上海: [71, 52], 南京: [62, 43], 常州: [60, 46], 无锡: [63, 48], 淄博: [64, 26], 北京: [60, 16], 天津: [65, 21], 杭州: [68, 58], 武汉: [48, 53], 深圳: [64, 82], 佛山: [55, 78], 珠海: [53, 84], 广州: [57, 79], 贵阳: [39, 69], 重庆: [37, 60], 成都: [30, 61], 济南: [63, 31], 南通: [70, 43], 宁波: [75, 57], 石家庄: [54, 26], 太原: [48, 25], 嘉兴: [70, 54], 太仓: [68, 48], 张家港: [64, 43], 绍兴: [71, 60], 东莞: [61, 82], 江门: [54, 84], 青岛: [75, 27], 洛阳: [47, 37], 郑州: [51, 39], 慈溪: [73, 57], 丽水: [69, 68], 靖江: [66, 45], 西安: [38, 39], 南昌: [55, 65], 长沙: [49, 67], 福州: [75, 74], 温州: [73, 67], 合肥: [56, 46], 滁州: [64, 39], 厦门: [71, 77], 常熟: [61, 43], 沈阳: [78, 15], 哈尔滨: [84, 8], 长春: [81, 11]
+      苏州: [57, 38], 上海: [71, 52], 南京: [62, 43], 常州: [60, 46], 无锡: [63, 48], 淄博: [64, 26], 北京: [60, 16], 天津: [65, 21], 杭州: [68, 58], 武汉: [48, 53], 深圳: [64, 82], 佛山: [55, 78], 珠海: [53, 84], 广州: [57, 79], 贵阳: [39, 69], 重庆: [37, 60], 成都: [30, 61], 济南: [63, 31], 南通: [70, 43], 宁波: [75, 57], 石家庄: [54, 26], 太原: [48, 25], 嘉兴: [70, 54], 太仓: [68, 48], 张家港: [64, 43], 绍兴: [71, 60], 东莞: [61, 82], 江门: [54, 84], 青岛: [75, 27], 洛阳: [47, 37], 郑州: [51, 39], 慈溪: [73, 57], 丽水: [69, 68], 靖江: [66, 45], 西安: [38, 39], 南昌: [55, 65], 长沙: [49, 67], 福州: [75, 74], 温州: [73, 67], 合肥: [56, 46], 滁州: [64, 39], 厦门: [71, 77], 常熟: [61, 43], 沈阳: [78, 15], 大连: [75, 18], 哈尔滨: [84, 8], 长春: [81, 11]
     };
     const mapPoints = document.querySelector('#map-points');
     const routeLines = document.querySelector('#route-lines');
@@ -2008,6 +2315,10 @@
         .sort((a, b) => cityWeights[b[0]] - cityWeights[a[0]] || b[1] - a[1])
         .slice(0, 5);
       document.querySelector('#stat-total-count').textContent = tours.length;
+      document.querySelector('#archive-stops-count').textContent = tours.length;
+      document.querySelector('#accordion-stops').textContent = tours.length;
+      document.querySelector('#accordion-shows').textContent = tours.length;
+      document.querySelector('#accordion-file-no').textContent = `001-${tours.length}`;
       document.querySelector('#stat-city-count').textContent = Object.keys(counts).length;
       document.querySelector('#stat-upcoming').textContent = `待演 ${upcoming}场`;
       document.querySelector('#stat-ended').textContent = `已结束 ${ended}场`;
@@ -2428,6 +2739,106 @@
     render();
     window.__tourData = tours;
     window.__openCityModal = openCityModal;
+
+    /* ============================================
+       档案柜上锁：密码验证、解锁同步、localStorage 持久化
+       - 默认锁定：地图 / 档案柜 / 日历 显示透明模糊 + 锁头
+       - 柜子本身保持闭合外观（无纸页）
+       - 正确密码解锁后三板块同步开放
+       ============================================ */
+    (function initArchiveLock() {
+      const SITE_PASSWORD = '260201';
+      const STORAGE_KEY = 'tang-archive-unlocked-v1';
+      const siteShell = document.querySelector('.site-shell');
+      const sectionLock = document.getElementById('section-lock');
+      const passwordModal = document.getElementById('password-modal');
+      const passwordForm = document.getElementById('password-form');
+      const passwordInput = document.getElementById('password-input');
+      const passwordError = document.getElementById('password-error');
+      const passwordClose = document.getElementById('password-close');
+
+      // 将锁头卡片克隆到地图/档案柜/日历三个板块的中心
+      const lockedSections = ['map', 'archive', 'calendar'];
+      const lockClones = [];
+      lockedSections.forEach((id) => {
+        const section = document.getElementById(id);
+        if (!section) return;
+        const clone = sectionLock.cloneNode(true);
+        clone.id = `section-lock-${id}`;
+        clone.removeAttribute('aria-hidden');
+        const cta = clone.querySelector('.lock-cta');
+        if (cta) cta.dataset.target = id;
+        section.appendChild(clone);
+        lockClones.push({ id, el: clone, cta });
+      });
+      // 隐藏原模板
+      sectionLock.style.display = 'none';
+
+      function isUnlocked() {
+        try { return localStorage.getItem(STORAGE_KEY) === '1'; } catch (e) { return false; }
+      }
+      function markUnlocked() {
+        try { localStorage.setItem(STORAGE_KEY, '1'); } catch (e) { /* ignore */ }
+      }
+      function setLocked(isLocked) {
+        siteShell.classList.toggle('is-locked', isLocked);
+        document.body.classList.toggle('is-locked', isLocked);
+        lockClones.forEach(({ el }) => el.setAttribute('aria-hidden', isLocked ? 'false' : 'true'));
+      }
+      function scrollToArchive() {
+        const target = document.getElementById('archive');
+        if (!target) return;
+        try { if (window.lenis && window.lenis.scrollTo) window.lenis.scrollTo(target, { offset: -80, duration: 1.1 }); else target.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      }
+      function openPasswordModal() {
+        passwordModal.hidden = false;
+        passwordError.hidden = true;
+        passwordInput.value = '';
+        requestAnimationFrame(() => passwordInput.focus());
+      }
+      function closePasswordModal() {
+        passwordModal.hidden = true;
+        passwordError.hidden = true;
+        passwordInput.value = '';
+      }
+      function unlockArchive() {
+        markUnlocked();
+        setLocked(false);
+        siteShell.classList.add('is-unlocking');
+        setTimeout(() => siteShell.classList.remove('is-unlocking'), 1100);
+        closePasswordModal();
+      }
+      function failPassword() {
+        passwordError.hidden = false;
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+
+      // 每个板块上的锁头按钮：先滚到该板块，再弹密码窗
+      lockClones.forEach(({ cta }) => {
+        cta?.addEventListener('click', () => {
+          const target = cta.dataset.target;
+          const sec = target ? document.getElementById(target) : null;
+          if (!sec) return;
+          try { if (window.lenis && window.lenis.scrollTo) window.lenis.scrollTo(sec, { offset: -80, duration: 1.1 }); else sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+          setTimeout(openPasswordModal, 650);
+        });
+      });
+      passwordClose?.addEventListener('click', closePasswordModal);
+      passwordModal?.addEventListener('click', (e) => { if (e.target === passwordModal) closePasswordModal(); });
+      passwordForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const value = (passwordInput.value || '').trim();
+        if (value === SITE_PASSWORD) unlockArchive();
+        else failPassword();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !passwordModal.hidden) closePasswordModal();
+      });
+
+      if (isUnlocked()) setLocked(false);
+      else setLocked(true);
+    })();
   </script>
   <script src="./gsap.min.js"></script>
   <script src="./SplitText.min.js"></script>
@@ -2495,7 +2906,7 @@
     initTextEffects();
 
     const amapCoordinates = {
-      苏州: [120.5853, 31.2989], 上海: [121.4737, 31.2304], 南京: [118.7969, 32.0603], 常州: [119.9741, 31.8112], 无锡: [120.3119, 31.4912], 淄博: [118.0549, 36.8135], 北京: [116.4074, 39.9042], 天津: [117.2009, 39.0842], 杭州: [120.1551, 30.2741], 武汉: [114.3054, 30.5931], 深圳: [114.0579, 22.5431], 佛山: [113.1227, 23.0288], 珠海: [113.5767, 22.2707], 广州: [113.2644, 23.1291], 贵阳: [106.6302, 26.6477], 重庆: [106.5516, 29.5630], 成都: [104.0665, 30.5723], 济南: [117.1201, 36.6512], 南通: [120.8943, 31.9802], 宁波: [121.5440, 29.8683], 石家庄: [114.5149, 38.0428], 太原: [112.5489, 37.8706], 嘉兴: [120.7555, 30.7461], 太仓: [121.1306, 31.4577], 张家港: [120.5555, 31.8757], 绍兴: [120.5821, 30.0515], 东莞: [113.7518, 23.0207], 江门: [113.0815, 22.5787], 青岛: [120.3826, 36.0671], 洛阳: [112.4540, 34.6197], 郑州: [113.6254, 34.7466], 慈溪: [121.2481, 30.1771], 丽水: [119.9228, 28.4676], 靖江: [120.2771, 31.9827], 西安: [108.9398, 34.3416], 南昌: [115.8579, 28.6829], 长沙: [112.9388, 28.2282], 福州: [119.2965, 26.0745], 温州: [120.6994, 27.9943], 合肥: [117.2272, 31.8206], 滁州: [118.9987, 32.6676], 厦门: [118.0894, 24.4798], 常熟: [120.7524, 31.6536], 沈阳: [123.4315, 41.8057], 哈尔滨: [126.6424, 45.7569], 长春: [125.3235, 43.8171]
+      苏州: [120.5853, 31.2989], 上海: [121.4737, 31.2304], 南京: [118.7969, 32.0603], 常州: [119.9741, 31.8112], 无锡: [120.3119, 31.4912], 淄博: [118.0549, 36.8135], 北京: [116.4074, 39.9042], 天津: [117.2009, 39.0842], 杭州: [120.1551, 30.2741], 武汉: [114.3054, 30.5931], 深圳: [114.0579, 22.5431], 佛山: [113.1227, 23.0288], 珠海: [113.5767, 22.2707], 广州: [113.2644, 23.1291], 贵阳: [106.6302, 26.6477], 重庆: [106.5516, 29.5630], 成都: [104.0665, 30.5723], 济南: [117.1201, 36.6512], 南通: [120.8943, 31.9802], 宁波: [121.5440, 29.8683], 石家庄: [114.5149, 38.0428], 太原: [112.5489, 37.8706], 嘉兴: [120.7555, 30.7461], 太仓: [121.1306, 31.4577], 张家港: [120.5555, 31.8757], 绍兴: [120.5821, 30.0515], 东莞: [113.7518, 23.0207], 江门: [113.0815, 22.5787], 青岛: [120.3826, 36.0671], 洛阳: [112.4540, 34.6197], 郑州: [113.6254, 34.7466], 慈溪: [121.2481, 30.1771], 丽水: [119.9228, 28.4676], 靖江: [120.2771, 31.9827], 西安: [108.9398, 34.3416], 南昌: [115.8579, 28.6829], 长沙: [112.9388, 28.2282], 福州: [119.2965, 26.0745], 温州: [120.6994, 27.9943], 合肥: [117.2272, 31.8206], 滁州: [118.9987, 32.6676], 厦门: [118.0894, 24.4798], 常熟: [120.7524, 31.6536], 沈阳: [123.4315, 41.8057], 大连: [121.5940, 38.9520], 哈尔滨: [126.6424, 45.7569], 长春: [125.3235, 43.8171]
     };
 
     function calculateTourDistance() {
@@ -2578,6 +2989,7 @@
       '常熟|常熟大剧院': [120.779723, 31.660917],
       '沈阳|辽宁中华剧场': [123.405014, 41.788467],
       '哈尔滨|哈尔滨国际会展体育中心环球剧场': [126.698384, 45.753204],
+      '大连|大冷文化宫': [121.5940, 38.9520],
       '北京|北京喜剧院': [116.432954, 39.930267],
       '杭州|杭州大剧院': [120.215108, 30.24404],
       '上海|艺海剧院-大剧场': [121.452228, 31.235073],
