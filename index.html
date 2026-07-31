@@ -1366,6 +1366,8 @@
     body.is-locked #archive,
     body.is-locked #calendar {
       position: relative;
+      overflow: hidden;
+      touch-action: none;
     }
     .site-shell.is-locked #map::after,
     .site-shell.is-locked #archive::after,
@@ -1380,7 +1382,8 @@
       backdrop-filter: blur(14px) saturate(.6);
       -webkit-backdrop-filter: blur(14px) saturate(.6);
       background: rgba(247, 236, 231, .35);
-      pointer-events: none;
+      pointer-events: auto;
+      cursor: default;
     }
     .site-shell.is-locked .section-lock,
     body.is-locked .section-lock {
@@ -2747,7 +2750,7 @@
        - 正确密码解锁后三板块同步开放
        ============================================ */
     (function initArchiveLock() {
-      const SITE_PASSWORD = '260201';
+      const SITE_PASSWORD = '211205';
       const STORAGE_KEY = 'tang-archive-unlocked-v1';
       const siteShell = document.querySelector('.site-shell');
       const sectionLock = document.getElementById('section-lock');
@@ -2784,6 +2787,32 @@
         siteShell.classList.toggle('is-locked', isLocked);
         document.body.classList.toggle('is-locked', isLocked);
         lockClones.forEach(({ el }) => el.setAttribute('aria-hidden', isLocked ? 'false' : 'true'));
+        // 锁定时给背后可交互内容加 inert，防止焦点跳出 / 键盘 Tab 进入
+        ['#map', '#archive', '#calendar'].forEach((sel) => {
+          const sec = document.querySelector(sel);
+          if (!sec) return;
+          // 仅给非锁头卡内部的可交互子元素加 inert
+          sec.querySelectorAll('button, a, input, select, textarea, [tabindex]').forEach((node) => {
+            if (node.closest('.section-lock')) return;
+            if (isLocked) {
+              if (!node.hasAttribute('data-orig-inert')) {
+                node.setAttribute('data-orig-inert', node.hasAttribute('inert') ? '1' : '0');
+              }
+              node.setAttribute('inert', '');
+              node.setAttribute('tabindex', '-1');
+              node.setAttribute('aria-hidden', 'true');
+            } else {
+              if (node.getAttribute('data-orig-inert') === '0') {
+                node.removeAttribute('inert');
+                node.removeAttribute('aria-hidden');
+              } else if (node.getAttribute('data-orig-inert') === '1') {
+                // 原本就有 inert 的，不动
+              }
+              node.removeAttribute('tabindex');
+              node.removeAttribute('data-orig-inert');
+            }
+          });
+        });
       }
       function scrollToArchive() {
         const target = document.getElementById('archive');
