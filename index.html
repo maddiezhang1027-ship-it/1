@@ -1932,11 +1932,12 @@
       { id: 122, city: '合肥', date: '09.24', session: '晚场', venue: '安徽大剧院' },
       { id: 123, city: '滁州', date: '09.26', session: '晚场', venue: '天长文化艺术中心大剧院' },
       { id: 124, city: '常熟', date: '09.27', session: '晚场', venue: '常熟大剧院' },
-      { id: 125, city: '苏州', date: '10', session: '待定', venue: '苏州狮山大剧院大剧场' },
-      { id: 126, city: '沈阳', date: '10.16', session: '晚场', venue: '辽宁中华剧场' },
-      { id: 127, city: '大连', date: '10.18', session: '晚场', venue: '大冷文化宫' },
-      { id: 127, city: '哈尔滨', date: '10.23', session: '晚场', venue: '哈尔滨国际会展体育中心环球剧场' },
-      { id: 128, city: '长春', date: '10.25', session: '晚场', venue: '长春国际会展中心' }
+      { id: 125, city: '南通', date: '09.30', session: '晚场', venue: '南通更俗大剧院' },
+      { id: 126, city: '苏州', date: '10', session: '待定', venue: '苏州狮山大剧院大剧场' },
+      { id: 127, city: '沈阳', date: '10.16', session: '晚场', venue: '辽宁中华剧场' },
+      { id: 128, city: '大连', date: '10.18', session: '晚场', venue: '大冷文化宫' },
+      { id: 129, city: '哈尔滨', date: '10.23', session: '晚场', venue: '哈尔滨国际会展体育中心环球剧场' },
+      { id: 130, city: '长春', date: '10.25', session: '晚场', venue: '长春国际会展中心' }
     ];
 
     const today = new Date();
@@ -1985,7 +1986,8 @@
           { start: '06.26', end: '06.28', host: '笑笑' },
           { start: '07.03', end: '07.05', host: '虎牙' },
           { start: '07.10', end: '07.11', host: '笑笑' },
-          { start: '07.17', end: '07.19', host: '赖铭佳' }
+          { start: '07.17', end: '07.19', host: '赖铭佳' },
+          { start: '08.01', end: '08.02', host: '笑笑' }
         ];
         const matched = hostRanges.find(range => tour.date >= range.start && tour.date <= range.end);
         tour.host = matched ? matched.host : '小红';
@@ -2037,7 +2039,12 @@
         { date: '07.17', city: '青岛', session: '晚场', link: 'https://m.alltuu.com/album/adf6c32ff7f3ea3d465a75f9a2034443/?from=link&menu=live' },
         { date: '07.18', city: '青岛', session: '午场', link: 'https://m.alltuu.com/album/0bb9cd816ebb178a0e96028fbae80240/?from=link&menu=live' },
         { date: '07.18', city: '青岛', session: '晚场', link: 'https://m.alltuu.com/album/646db94c25963f8aa1d42fcc957172a3/?from=link&menu=live' },
-        { date: '07.19', city: '青岛', session: '晚场', link: 'https://m.alltuu.com/album/3ccc5bd0d4016a77a48c12dfea0444fb/?from=link&menu=live' }
+        { date: '07.19', city: '青岛', session: '晚场', link: 'https://m.alltuu.com/album/3ccc5bd0d4016a77a48c12dfea0444fb/?from=link&menu=live' },
+        { date: '07.25', city: '洛阳', session: '晚场', link: 'https://m.alltuu.com/album/90a632d4b9d7331c0e1cd94992474601/?from=link&menu=live' },
+        { date: '07.26', city: '郑州', session: '午场', link: 'https://m.alltuu.com/album/4eca5976ae2f9a403ca61321b0fe9557/?from=link&menu=live' },
+        { date: '07.26', city: '郑州', session: '晚场', link: 'https://m.alltuu.com/album/72095690a2d94db8f610d3e86fd7ef50/?from=link&menu=live' },
+        { date: '08.01', city: '慈溪', session: '晚场', link: 'https://m.alltuu.com/album/bdc0203d56e895f4046168fc7bdf6d44/?from=link&menu=live' },
+        { date: '08.02', city: '丽水', session: '晚场', link: 'https://m.alltuu.com/album/30ded483ea3210808e10959bca54a849/?from=link&menu=live' }
       ];
       const matchedPhoto = photoLinks.find(p => tour.date === p.date && tour.city === p.city && tour.session === p.session);
       tour.link = matchedPhoto ? matchedPhoto.link : '';
@@ -2993,6 +3000,7 @@
       '重庆|重庆大剧院': [106.581333, 29.569832],
       '成都|成都高新中演剧院': [104.051708, 30.544038],
       '南通|南通大剧院': [120.941173, 31.966571],
+      '南通|南通更俗大剧院': [120.8645, 32.0168],
       '宁波|宁波文化广场大剧院': [121.619812, 29.85819],
       '石家庄|石家庄艺术中心大剧院': [114.481692, 38.036407],
       '太原|太原青年宫演艺中心': [112.541808, 37.874423],
