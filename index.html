@@ -1154,7 +1154,11 @@
     .footer { display: flex; justify-content: space-between; max-width: 1156px; margin: 0 auto; padding-top: 58px; color: var(--muted); font-family: var(--mono); font-size: 10px; letter-spacing: .08em; }
     .footer-mark { color: var(--pink); font-family: var(--serif); font-size: 18px; font-style: italic; }
 
-    .calendar-page { padding: 82px 42px 96px; background: linear-gradient(180deg, #f5e5e4, #f8eeeb); }
+    .calendar-page { padding: 82px 42px 96px; background:
+      radial-gradient(circle at 20% 0%, #f5e5e4 0%, transparent 40%),
+      radial-gradient(circle at 80% 100%, #efd6df 0%, transparent 40%),
+      linear-gradient(180deg, #f5e5e4, #f3d6e2);
+    }
     .calendar-inner { max-width: 1240px; margin: 0 auto; }
     .calendar-header { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 30px; }
     .calendar-title { margin: 0; color: var(--ink); font-size: clamp(34px, 5vw, 58px); letter-spacing: -.075em; line-height: .95; }
@@ -1164,33 +1168,296 @@
     .calendar-month-button { flex: 0 0 auto; min-width: 54px; padding: 9px 13px; border: 1px solid rgba(125,90,142,.22); border-radius: 999px; color: var(--muted); background: rgba(247,241,232,.64); font-family: var(--mono); font-size: 10px; letter-spacing: .06em; transition: border-color .2s, color .2s, background .2s, transform .2s; }
     .calendar-month-button:hover, .calendar-month-button:focus-visible { outline: none; border-color: var(--pink); color: var(--ink); transform: translateY(-1px); }
     .calendar-month-button.active { border-color: #674b72; color: #fffaf4; background: #7d5a8e; }
-    .calendar-sheet { overflow: hidden; border: 1px solid rgba(103,75,114,.38); border-radius: 24px 24px 10px 10px; background: #f7f1e8; box-shadow: 0 24px 62px rgba(75,47,65,.16), 0 7px 0 rgba(125,90,142,.1); }
-    .calendar-sheet-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; padding: 24px 28px 19px; border-bottom: 1px solid rgba(103,75,114,.32); color: #f7f1e8; background: linear-gradient(135deg, #8d668e, #684d79); }
-    .calendar-month-name { margin: 0; font-family: var(--serif); font-size: 34px; font-weight: 500; letter-spacing: -.04em; }
-    .calendar-month-meta { margin: 0; color: #f2bfd0; font-family: var(--mono); font-size: 9px; letter-spacing: .14em; text-align: right; }
+
+    /* ===== Denim journal wrapper (site-themed plum-pink linen) ===== */
+    .calendar-sheet {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px 18px 14px 14px;
+      background:
+        repeating-linear-gradient(45deg, rgba(255,255,255,.04) 0 2px, transparent 2px 5px),
+        repeating-linear-gradient(-45deg, rgba(0,0,0,.03) 0 2px, transparent 2px 6px),
+        linear-gradient(165deg, #8d668e 0%, #7a527a 60%, #5e3d6e 100%);
+      box-shadow:
+        0 28px 64px rgba(94, 61, 110, .32),
+        0 8px 0 rgba(94, 61, 110, .14),
+        inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+    /* outer stitched frame around the whole calendar */
+    .calendar-sheet::before {
+      content: '';
+      position: absolute;
+      inset: 10px;
+      pointer-events: none;
+      border: 1.5px dashed #f5e5cd;
+      border-radius: 12px;
+      opacity: .55;
+    }
+    .calendar-sheet::after {
+      content: '';
+      position: absolute;
+      inset: 16px;
+      pointer-events: none;
+      border: 1px dashed rgba(245,229,205,.35);
+      border-radius: 8px;
+    }
+    /* brass rivets in each corner */
+    .calendar-rivet {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #f0c684 0%, #b8863c 55%, #6b4a1d 100%);
+      box-shadow: 0 1px 2px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.4);
+      pointer-events: none;
+      z-index: 3;
+    }
+    .calendar-rivet::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 1px;
+      background: rgba(0,0,0,.35);
+      transform: translate(-50%, -50%) rotate(45deg);
+      border-radius: 1px;
+    }
+    .calendar-rivet.tl { top: 6px; left: 6px; }
+    .calendar-rivet.tr { top: 6px; right: 6px; }
+    .calendar-rivet.bl { bottom: 6px; left: 6px; }
+    .calendar-rivet.br { bottom: 6px; right: 6px; }
+
+    /* linen label header */
+    .calendar-sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      position: relative;
+      padding: 26px 30px 20px;
+      border-bottom: 1.5px dashed rgba(245,229,205,.45);
+      color: #f5e5cd;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.18), transparent 60%),
+        linear-gradient(135deg, #8d668e 0%, #684d79 100%);
+    }
+    .calendar-sheet-head::after {
+      content: '';
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 4px;
+      height: 1px;
+      border-top: 1px dashed rgba(245,229,205,.3);
+    }
+    .calendar-month-name {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 36px;
+      font-weight: 500;
+      letter-spacing: -.04em;
+      color: #fff5e7;
+      text-shadow: 0 1px 0 rgba(0,0,0,.18);
+    }
+    .calendar-month-meta {
+      margin: 0;
+      color: #f2bfd0;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .14em;
+      text-align: right;
+    }
     .calendar-board { overflow-x: auto; }
     .calendar-weekdays, .calendar-grid { min-width: 760px; }
-    .calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid rgba(103,75,114,.24); background: #efd6df; }
-    .calendar-weekdays span { padding: 10px 12px; border-left: 1px solid rgba(103,75,114,.14); color: #674b72; font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .1em; text-align: center; }
+
+    /* linen weekday strip */
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-bottom: 1.5px dashed rgba(245,229,205,.4);
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 1px, transparent 1px 3px),
+        linear-gradient(180deg, #8d668e, #684d79);
+    }
+    .calendar-weekdays span {
+      position: relative;
+      padding: 11px 12px;
+      color: #f5e5cd;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-align: center;
+      border-left: 1px dashed rgba(245,229,205,.25);
+    }
     .calendar-weekdays span:first-child { border-left: 0; }
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); background: rgba(125,90,142,.16); gap: 1px; }
-    .calendar-day { position: relative; min-height: 116px; padding: 9px 8px 8px; background: #fbf7f0; }
-    .calendar-day.is-empty { background: #eee4df; }
-    .calendar-day.has-events { background: linear-gradient(155deg, #fffaf4, #f7e9e7); }
-    .calendar-day-number { display: block; margin-bottom: 7px; color: #796a67; font-family: var(--serif); font-size: 17px; line-height: 1; }
-    .calendar-day.has-events .calendar-day-number { color: #b3323a; font-weight: 600; }
+
+    /* ===== Linen grid + stitched day cells ===== */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      padding: 6px;
+      background:
+        repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px),
+        #5e3d6e;
+    }
+    .calendar-day {
+      position: relative;
+      min-height: 116px;
+      padding: 11px 9px 9px;
+      border-radius: 6px;
+      background:
+        repeating-linear-gradient(45deg, rgba(255,255,255,.04) 0 1.5px, transparent 1.5px 4px),
+        repeating-linear-gradient(-45deg, rgba(0,0,0,.05) 0 1.5px, transparent 1.5px 5px),
+        linear-gradient(165deg, #a07ea0 0%, #7a527a 100%);
+      color: #f5e5cd;
+      box-shadow:
+        inset 0 0 0 1px rgba(245,229,205,.18),
+        inset 0 1px 0 rgba(255,255,255,.1),
+        inset 0 -2px 4px rgba(0,0,0,.12);
+    }
+    /* stitched dashed border around each cell */
+    .calendar-day::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed rgba(245,229,205,.32);
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    .calendar-day.is-empty {
+      background:
+        repeating-linear-gradient(45deg, rgba(0,0,0,.06) 0 1.5px, transparent 1.5px 5px),
+        linear-gradient(165deg, #6a4970 0%, #4d3257 100%);
+      box-shadow: inset 0 0 0 1px rgba(245,229,205,.08);
+    }
+    .calendar-day.is-empty::before { border-color: rgba(245,229,205,.14); }
+
+    /* Cream paper "patch" for days with events */
+    .calendar-day.has-events {
+      background:
+        radial-gradient(ellipse at top right, rgba(231,161,181,.16) 0%, transparent 60%),
+        linear-gradient(165deg, #fff8ed 0%, #f5e5cd 100%);
+      color: #4a3a2c;
+      box-shadow:
+        inset 0 0 0 1px rgba(125,90,142,.15),
+        inset 0 1px 0 rgba(255,255,255,.5),
+        0 2px 4px rgba(94, 61, 110, .18);
+      transform: rotate(-.4deg);
+    }
+    .calendar-day.has-events::before {
+      border: 1px dashed rgba(125,90,142,.45);
+    }
+    .calendar-day-number { display: block; margin-bottom: 7px; color: #f5e5cd; font-family: var(--serif); font-size: 17px; font-weight: 600; line-height: 1; text-shadow: 0 1px 0 rgba(0,0,0,.18); }
+    .calendar-day.has-events .calendar-day-number { color: #b3323a; text-shadow: none; }
+
+    /* Milestone day: a brass button on a paper patch */
+    .calendar-day.is-milestone {
+      background:
+        radial-gradient(ellipse at top right, rgba(231,161,181,.22) 0%, transparent 60%),
+        linear-gradient(165deg, #fff8ed 0%, #f7d6d8 100%);
+      color: #4a3a2c;
+      box-shadow:
+        inset 0 0 0 1px rgba(125,90,142,.2),
+        inset 0 1px 0 rgba(255,255,255,.55),
+        0 3px 6px rgba(94, 61, 110, .22);
+      transform: rotate(.5deg);
+    }
+    .calendar-day.is-milestone::before {
+      border: 1.5px dashed #b3323a;
+    }
+    .calendar-day.is-milestone::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #f0c684 0%, #b8863c 55%, #6b4a1d 100%);
+      box-shadow: 0 1px 2px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.4);
+      transform: translate(-50%, -50%) rotate(45deg);
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+    }
+    .calendar-marker {
+      position: absolute;
+      right: 4px;
+      bottom: 4px;
+      display: flex;
+      align-items: flex-end;
+      gap: 1px;
+      pointer-events: none;
+      transform: rotate(-4deg);
+      line-height: 1;
+      z-index: 2;
+    }
+    .calendar-marker-num {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 700;
+      color: rgba(179, 50, 58, .82);
+      letter-spacing: -.04em;
+      font-size: 26px;
+      transform: skewX(-6deg) scaleY(1.08);
+      text-shadow: 0 0 1px rgba(179, 50, 58, .15);
+    }
+    .calendar-marker-stroke {
+      width: 38px;
+      height: 10px;
+      margin-bottom: 3px;
+      overflow: visible;
+    }
+    .calendar-marker-stroke path {
+      fill: none;
+      stroke: rgba(179, 50, 58, .55);
+      stroke-width: 4.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
     .calendar-events { display: grid; gap: 4px; }
-    .calendar-event { position: relative; width: 100%; padding: 5px 6px 5px 12px; overflow: hidden; border: 1px solid rgba(125,90,142,.2); border-radius: 5px; color: #493740; background: #dce6f1; font-size: 9px; line-height: 1.25; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
-    .calendar-event::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 5px; background: #7d5a8e; }
-    .calendar-event.upcoming { background: #efd6df; }
+    .calendar-event {
+      position: relative;
+      width: 100%;
+      padding: 5px 6px 5px 12px;
+      overflow: hidden;
+      border: 1px dashed rgba(125,90,142,.4);
+      border-radius: 4px;
+      color: #4a3a2c;
+      background: linear-gradient(180deg, #fbf3e1, #f1e2c0);
+      font-size: 9px;
+      line-height: 1.25;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      box-shadow: 0 1px 0 rgba(125,90,142,.1);
+    }
+    .calendar-event::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      bottom: 2px;
+      left: 3px;
+      width: 4px;
+      background: #7d5a8e;
+      border-radius: 2px;
+    }
+    .calendar-event.upcoming {
+      background: linear-gradient(180deg, #fde2e7, #f7c8d2);
+      color: #6b1f24;
+    }
     .calendar-event.upcoming::before { background: #b3323a; }
     .calendar-event:hover, .calendar-event:focus-visible { z-index: 1; outline: 2px solid #e7a1b5; outline-offset: 1px; }
     .calendar-event span { color: #7d5a8e; font-family: var(--mono); font-size: 7px; }
     .calendar-emoji-link { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: #f4d7de; color: #b3323a; font-size: 14px; text-decoration: none; line-height: 1; transition: transform .2s, background .2s; }
     .calendar-emoji-link:hover, .calendar-emoji-link:focus-visible { transform: scale(1.15); background: #e7a1b5; outline: none; }
-    .calendar-undated { display: none; align-items: center; gap: 12px; padding: 14px 28px; border-top: 1px dashed rgba(103,75,114,.3); color: var(--muted); background: #efd6df; font-size: 11px; }
+    .calendar-undated { display: none; align-items: center; gap: 12px; padding: 14px 28px; border-top: 1.5px dashed rgba(245,229,205,.4); color: #f5e5cd; background: linear-gradient(180deg, rgba(0,0,0,.18), transparent 60%), linear-gradient(135deg, #8d668e 0%, #684d79 100%); font-size: 11px; }
     .calendar-undated.visible { display: flex; }
-    .calendar-undated strong { color: #674b72; font-family: var(--mono); font-size: 9px; letter-spacing: .1em; }
+    .calendar-undated strong { color: #f2bfd0; font-family: var(--mono); font-size: 9px; letter-spacing: .1em; }
     .calendar-undated button { padding: 6px 9px; border: 1px solid rgba(103,75,114,.28); border-radius: 6px; color: #493740; background: #f7f1e8; font-size: 10px; }
 
     .map-page { padding: 76px 42px 100px; background: var(--paper); }
@@ -1736,6 +2003,10 @@
           </div>
           <div class="calendar-months" id="calendar-months" role="tablist" aria-label="选择巡演月份"></div>
           <div class="calendar-sheet">
+            <span class="calendar-rivet tl" aria-hidden="true"></span>
+            <span class="calendar-rivet tr" aria-hidden="true"></span>
+            <span class="calendar-rivet bl" aria-hidden="true"></span>
+            <span class="calendar-rivet br" aria-hidden="true"></span>
             <div class="calendar-sheet-head"><h3 class="calendar-month-name" id="calendar-month-name"></h3><p class="calendar-month-meta" id="calendar-month-meta"></p></div>
             <div class="calendar-board">
               <div class="calendar-weekdays" aria-hidden="true"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
@@ -2083,7 +2354,11 @@
         let specialEmoji = '';
         if (month === 1 && day === 16) specialEmoji = `<a class="calendar-emoji-link" href="http://xhslink.com/o/9ZkUkQhINJb" target="_blank" rel="noopener" title="1.16 特别活动">💌</a>`;
         if (month === 3 && day === 4) specialEmoji = `<a class="calendar-emoji-link" href="http://xhslink.com/o/4i2MffSH6Ug" target="_blank" rel="noopener" title="3.4 特别活动">🎂</a>`;
-        return `<div class="calendar-day${dayTours.length ? ' has-events' : ''}${specialEmoji ? ' has-special' : ''}" role="gridcell" aria-label="2026年${month}月${day}日${dayTours.length ? `，${dayTours.length}场演出` : ''}"><span class="calendar-day-number">${String(day).padStart(2, '0')}</span><div class="calendar-events">${events}${specialEmoji}</div></div>`;
+        const milestone = dayTours.find(tour => tour.id === 50 || tour.id === 100);
+        const milestoneMarker = milestone
+          ? `<span class="calendar-marker" aria-hidden="true"><svg class="calendar-marker-stroke" viewBox="0 0 40 10" preserveAspectRatio="none"><path d="M2 6 C 9 1, 18 9, 27 4 S 38 7, 39 5"/></svg><span class="calendar-marker-num">${milestone.id}</span></span>`
+          : '';
+        return `<div class="calendar-day${dayTours.length ? ' has-events' : ''}${specialEmoji ? ' has-special' : ''}${milestone ? ' is-milestone' : ''}" role="gridcell" aria-label="2026年${month}月${day}日${dayTours.length ? `，${dayTours.length}场演出` : ''}${milestone ? `，第${milestone.id}场里程碑` : ''}"><span class="calendar-day-number">${String(day).padStart(2, '0')}</span>${milestoneMarker}<div class="calendar-events">${events}${specialEmoji}</div></div>`;
       }).join('');
 
       calendarUndatedEl.classList.toggle('visible', undatedTours.length > 0);
