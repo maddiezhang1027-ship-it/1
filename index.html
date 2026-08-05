@@ -7,7 +7,7 @@
   <title>唐香玉《糖》巡演档案</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Courier+Prime:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Courier+Prime:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"></script>
   <style>
     @font-face {
@@ -196,6 +196,167 @@
     .poster-jar-glass::after { content: ''; position: absolute; z-index: 2; top: 10px; right: 9px; width: 8px; height: 43px; border-radius: 50%; background: rgba(255,255,255,.7); transform: rotate(-10deg); pointer-events: none; }
     .poster-candy { position: absolute; width: var(--candy-size, 17px); height: var(--candy-size, 17px); border: 1px solid rgba(103,75,114,.25); border-radius: 50%; background: var(--candy-color); box-shadow: inset 5px 5px rgba(255,255,255,.32); transform: translate(var(--gravity-x, 0px), var(--gravity-y, 0px)); transition: transform .15s ease-out; }
     @media (prefers-reduced-motion: reduce) { .poster-candy-jar, .poster-jar-lid { transition-duration: .01ms; } }
+
+    /* 海报装饰：浅粉色信封、火漆印章、卡片与珍珠项链 */
+    .poster-envelope {
+      position: absolute;
+      z-index: 3;
+      left: 21%;
+      bottom: 19%;
+      width: 82px;
+      height: 54px;
+      transform: rotate(-45deg);
+      transform-origin: 50% 100%;
+      filter: drop-shadow(0 7px 6px rgba(61,44,38,.14));
+    }
+    .poster-envelope-card {
+      position: absolute;
+      left: -7px;
+      top: -9px;
+      width: 88px;
+      height: 62px;
+      border-radius: 5px;
+      background: linear-gradient(145deg, #f9dee4 0%, #f0b8c6 100%);
+      box-shadow: 0 3px 9px rgba(61,44,38,.12);
+    }
+    .poster-envelope-card::before {
+      content: '';
+      position: absolute;
+      inset: 9px;
+      border-radius: 3px;
+      background:
+        repeating-linear-gradient(45deg, rgba(255,255,255,.32) 0 2px, transparent 2px 8px),
+        repeating-linear-gradient(-45deg, rgba(255,255,255,.22) 0 2px, transparent 2px 10px);
+      opacity: .8;
+    }
+    .poster-envelope-body {
+      position: absolute;
+      inset: 0;
+      border-radius: 4px;
+      background: linear-gradient(165deg, #fbe6eb 0%, #f2c6d0 55%, #e8b0c0 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 5px rgba(125,90,142,.1);
+      overflow: hidden;
+    }
+    .poster-envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: linear-gradient(180deg, #f6d4dc 0%, #e8b0c0 100%);
+      clip-path: polygon(0 0, 50% 100%, 100% 0);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
+    }
+    .poster-envelope-seal {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      top: 17px;
+      width: 23px;
+      height: 23px;
+      transform: translateX(-50%) rotate(5deg);
+      filter: drop-shadow(0 2px 1px rgba(50,28,25,.3));
+    }
+    .poster-envelope-seal svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .poster-envelope[role="button"] { cursor: pointer; }
+    .poster-envelope[role="button"]:focus-visible { outline: 3px solid rgba(247,123,155,.62); outline-offset: 7px; border-radius: 5px; }
+    .poster-envelope[role="button"]:hover { filter: drop-shadow(0 10px 8px rgba(61,44,38,.2)); }
+
+    .letter-overlay {
+      position: fixed;
+      z-index: 1200;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 28px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: rgba(61,44,38,.36);
+      backdrop-filter: blur(9px) saturate(.85);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .32s ease, visibility .32s;
+      overscroll-behavior: contain;
+    }
+    .letter-overlay.is-open { opacity: 1; visibility: visible; }
+    .letter-sheet-wrap {
+      position: relative;
+      width: min(610px, calc(100vw - 32px));
+      margin: 28px auto 60px;
+      flex-shrink: 0;
+      transform: translateY(45px) scale(.88) rotate(-1.5deg);
+      opacity: 0;
+      transition: transform .52s cubic-bezier(.2,.85,.25,1), opacity .36s ease;
+    }
+    .letter-overlay.is-open .letter-sheet-wrap { transform: translateY(0) scale(1) rotate(-.35deg); opacity: 1; }
+    .letter-sheet {
+      position: relative;
+      min-height: 900px;
+      padding: 72px 66px 64px;
+      color: #513d38;
+      background:
+        repeating-linear-gradient(0deg, transparent 0 25px, rgba(125,90,142,.07) 25px 26px),
+        radial-gradient(circle at 16% 9%, rgba(247,123,155,.08), transparent 28%),
+        radial-gradient(circle at 88% 80%, rgba(141,147,203,.09), transparent 32%),
+        #fff8f2;
+      box-shadow: 0 32px 80px rgba(61,44,38,.3), 0 4px 14px rgba(61,44,38,.15), inset 0 0 55px rgba(157,145,141,.09);
+      clip-path: polygon(.8% 0, 99.1% .5%, 100% 18%, 99.2% 38%, 100% 61%, 99.3% 83%, 99.7% 100%, .6% 99.5%, 0 79%, .7% 56%, 0 31%);
+    }
+    .letter-sheet::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .34;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+      mix-blend-mode: multiply;
+    }
+    .letter-tape {
+      position: absolute;
+      z-index: 3;
+      top: -15px;
+      left: 50%;
+      width: 126px;
+      height: 42px;
+      transform: translateX(-50%) rotate(1.5deg);
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,.16) 0 2px, transparent 2px 8px), rgba(231,161,181,.63);
+      clip-path: polygon(2% 8%, 98% 0, 96% 92%, 0 100%);
+      box-shadow: 0 2px 4px rgba(61,44,38,.1);
+    }
+    .letter-close {
+      position: absolute;
+      z-index: 5;
+      top: 14px;
+      right: 17px;
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(61,44,38,.2);
+      border-radius: 50%;
+      color: #674b72;
+      background: rgba(255,248,242,.8);
+      font: 24px/1 var(--serif);
+      cursor: pointer;
+    }
+    .letter-copy { position: relative; z-index: 2; font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', cursive; font-size: 18px; line-height: 1.72; letter-spacing: .025em; }
+    .letter-copy p { margin: 0 0 18px; }
+    .letter-copy strong { font-weight: 400; color: #392822; text-shadow: .3px 0 currentColor; }
+    .letter-candy { position: absolute; z-index: 2; width: 48px; height: 66px; transform: rotate(var(--r)); opacity: .95; }
+    .letter-candy img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 4px 5px rgba(61,44,38,.18)); }
+    .letter-candy.one { top: 22px; left: 18px; --r:-22deg; }
+    .letter-candy.two { top: 34px; right: 20px; --r:14deg; }
+    .letter-candy.three { top: 82px; right: 6px; --r:26deg; }
+    .letter-candy.four { bottom: 26px; left: 14px; --r:-18deg; }
+    .letter-candy.five { bottom: 22px; right: 18px; --r:16deg; }
+    body.letter-open { overflow: hidden; }
+    @media (max-width: 640px) {
+      .letter-overlay { padding: 12px; align-items: start; }
+      .letter-sheet-wrap { width: calc(100vw - 18px); margin: 18px auto; }
+      .letter-sheet { min-height: auto; padding: 62px 34px 54px; }
+      .letter-copy { font-size: 16px; line-height: 1.68; }
+      .letter-candy { width: 38px; height: 52px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .letter-overlay, .letter-sheet-wrap { transition-duration: .01ms; } }
 
     .archive { position: relative; padding: 80px 42px 120px; background: var(--cream); }
     .archive-inner { max-width: 1156px; margin: 0 auto; }
@@ -963,20 +1124,32 @@
     }
     .modal-stub-barcode {
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
-      gap: 1px;
+      gap: 0;
       width: 100%;
       height: 34px;
       min-height: 34px;
-      padding: 4px;
+      padding: 4px 6px;
       background: rgba(247,241,232,.48);
     }
     .modal-stub-barcode span {
       display: block;
-      width: 2px;
+      flex: 0 0 auto;
+      width: 1.4px;
       height: 100%;
       background: #493740;
+    }
+    @media (max-width: 900px) {
+      .modal-stub-barcode { padding: 4px 0; }
+      .modal-stub-barcode span { width: 0.85px; }
+    }
+    .modal-stub-barcode-num {
+      margin-top: -3px;
+      color: #493740;
+      font-size: 7px;
+      font-family: 'Courier Prime', monospace;
+      letter-spacing: .08em;
     }
     .modal-stub-no {
       color: #493740;
@@ -1567,9 +1740,10 @@
     .modal-kicker { margin: 0 0 6px; color: var(--pink); font-family: var(--mono); font-size: 10px; letter-spacing: .12em; }
     .modal-title { margin: 0; font-family: var(--serif); font-size: 34px; font-weight: 500; }
     .modal-list { display: grid; gap: 8px; margin-top: 22px; }
-    .modal-show { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-top: 1px solid var(--line); font-size: 12px; }
+    .modal-show { display: grid; grid-template-columns: auto auto 1fr auto; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line); font-size: 12px; }
     .modal-show-date { font-family: var(--mono); font-size: 10px; }
     .modal-show-session { color: var(--muted); }
+    .modal-show-venue { color: var(--ink); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .modal-show-status { padding: 5px 8px; border-radius: 20px; font-size: 10px; }
     .modal-show-status.upcoming { color: var(--blue-deep); background: #e1e3fa; }
     .modal-show-status.ended { color: var(--muted); background: #e3dedc; }
@@ -1586,6 +1760,10 @@
       .search-shortcut { display: none; }
       .hero { display: flex; flex-direction: column; align-items: stretch; padding: 42px 22px 75px; gap: 45px; }
       .hero-poster { grid-column: auto; width: 88%; height: 340px; min-height: 340px; margin: 0 auto; transform: rotate(1.5deg); }
+      .poster-envelope { left: 18%; bottom: 19%; width: 58px; height: 38px; }
+      .poster-envelope-card { left: -5px; top: -6px; width: 62px; height: 44px; }
+      .poster-envelope-flap { height: 21px; }
+      .poster-envelope-seal { top: 12px; width: 17px; height: 17px; }
       .archive { padding: 62px 22px 80px; }
       .calendar-page { padding: 62px 22px 76px; }
       .calendar-header { display: block; }
@@ -1618,6 +1796,10 @@
       .tour-date { grid-column: 1 / -1; grid-row: 2; }
       .tour-venue { grid-column: 1 / -1; grid-row: 3; padding-top: 4px; }
       .tour-status { grid-column: 1 / -1; grid-row: 4; justify-self: start; }
+      .modal-show { grid-template-columns: 1fr auto; grid-template-rows: auto auto; }
+      .modal-show-venue { grid-column: 1 / -1; font-size: 10px; }
+      .modal-show-session { justify-self: end; }
+      .modal-show-status { grid-column: 2; grid-row: 1; }
       .footer { padding-top: 45px; }
     }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition-duration: .01ms !important; } }
@@ -1914,6 +2096,59 @@
         <div class="hero-poster" aria-label="《糖》巡演主视觉海报">
           <div class="poster-sky"></div><div class="poster-curtain"></div><div class="poster-curtain right"></div><div class="poster-sun"></div><div class="poster-stage"></div>
           <div class="poster-candy-jar" role="button" tabindex="0" aria-label="打开糖果罐并用鼠标倾倒" aria-pressed="false"><span class="poster-jar-lid"></span><span class="poster-jar-neck"></span><span class="poster-jar-glass"></span></div>
+          <div class="poster-envelope" role="button" tabindex="0" aria-label="打开唐香玉写给大家的信" aria-haspopup="dialog">
+            <div class="poster-envelope-card"></div>
+            <div class="poster-envelope-body">
+              <div class="poster-envelope-flap"></div>
+            </div>
+            <div class="poster-envelope-seal">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <defs>
+                  <radialGradient id="antiqueWax" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#ff9a94"/><stop offset=".28" stop-color="#ef625f"/><stop offset=".68" stop-color="#c8323b"/><stop offset="1" stop-color="#8f1e2b"/></radialGradient>
+                  <filter id="sealRecess" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation=".55" result="blur"/>
+                    <feOffset dx="-.65" dy="-.65" result="lightOffset"/>
+                    <feFlood flood-color="#ffc0b8" flood-opacity=".62" result="lightColor"/>
+                    <feComposite in="lightColor" in2="lightOffset" operator="in" result="lightEdge"/>
+                    <feOffset in="blur" dx=".75" dy=".8" result="darkOffset"/>
+                    <feFlood flood-color="#5f0915" flood-opacity=".78" result="darkColor"/>
+                    <feComposite in="darkColor" in2="darkOffset" operator="in" result="darkEdge"/>
+                    <feMerge><feMergeNode in="darkEdge"/><feMergeNode in="lightEdge"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+                <path d="M16 2.5C20 1.5 22 4 25 4.5C29 6 28 10 29.5 13C31 17 28 20 28 23C26 28 21 27 18 29.5C14 31 11 28 8 28C3 26 4 22 2.5 19C1 15 4 12 4 9C6 4 11 5 16 2.5Z" fill="url(#antiqueWax)"/>
+                <circle cx="16" cy="16" r="10" fill="none" stroke="#74111e" stroke-width="1.35" opacity=".9"/>
+                <circle cx="16" cy="16" r="8.8" fill="none" stroke="#ffaaa2" stroke-width=".55" opacity=".42"/>
+                <g fill="none" stroke="#6b0d19" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".78" filter="url(#sealRecess)"><path d="M16 22V11"/><path d="M16 14C12 9 8.8 11.8 11.8 16"/><path d="M16 16C21 10.8 23.5 14.2 19 18.2"/><path d="M16 19C11.8 15.8 9.5 19.2 13.2 22"/></g>
+                <g fill="none" stroke="#ffaca4" stroke-width=".55" stroke-linecap="round" opacity=".45" transform="translate(-.45 -.5)"><path d="M16 22V11"/><path d="M16 14C12 9 8.8 11.8 11.8 16"/><path d="M16 16C21 10.8 23.5 14.2 19 18.2"/><path d="M16 19C11.8 15.8 9.5 19.2 13.2 22"/></g>
+                <g fill="none" stroke="#570713" stroke-width=".55" stroke-linecap="round" opacity=".65" transform="translate(.55 .65)"><path d="M16 22V11"/><path d="M16 14C12 9 8.8 11.8 11.8 16"/><path d="M16 16C21 10.8 23.5 14.2 19 18.2"/><path d="M16 19C11.8 15.8 9.5 19.2 13.2 22"/></g>
+              </svg>
+            </div>
+          </div>
+          <div class="letter-overlay" id="letter-overlay" role="dialog" aria-modal="true" aria-labelledby="letter-title" aria-hidden="true">
+            <div class="letter-sheet-wrap">
+              <div class="letter-tape" aria-hidden="true"></div>
+              <button class="letter-close" type="button" aria-label="关闭信纸">×</button>
+              <article class="letter-sheet">
+                <i class="letter-candy one" aria-hidden="true"><img src="./assets/gummy-bears/bear-pink.png" alt=""></i>
+                <i class="letter-candy two" aria-hidden="true"><img src="./assets/gummy-bears/bear-yellow.png" alt=""></i>
+                <i class="letter-candy three" aria-hidden="true"><img src="./assets/gummy-bears/bear-blue.png" alt=""></i>
+                <i class="letter-candy four" aria-hidden="true"><img src="./assets/gummy-bears/bear-purple.png" alt=""></i>
+                <i class="letter-candy five" aria-hidden="true"><img src="./assets/gummy-bears/bear-orange.png" alt=""></i>
+                <div class="letter-copy" id="letter-title">
+                  <p>大家好，我是唐香玉，<br>这是我的第三个单口喜剧专场——《糖》。</p>
+                  <p>此刻我刚完成第三场内测，去往高铁的路上。<br>脸有点热，心有点烫，耳边还有点嗡嗡地响。就是这种感觉，足以支撑兴奋到后半夜。</p>
+                  <p>谢幕的时候，有一句话忘记说了：<br><strong>“对我来说，很多时刻和场合其实都可以装，可以退，可以藏，但专场上不可以。”</strong></p>
+                  <p>这几年，环境在变，心境在变，但这种一吐为快的欲望没变。<br>曾经以为一辈子都不会说出来的事，全说了个遍。</p>
+                  <p>比如我家开的是面包车、我的青春期是贫困生、去做礼仪就我选不上……跟任何对象我都没说过哈哈哈。把这些加上笑点，裹上糖衣，一开始试探性地讲出来，后来能放松地讲出来，再后来完全坦然地讲出来，因为我的观众们看见了我，接住了我。让我发现，我心里的力量比我想象的大得多，其实剥去糖衣后不是苦涩，而是一颗糖心。</p>
+                  <p>这个专场一开始内容很多，经过调试和打磨，留下了我最最最想说的，再不说我就憋疯了的。如果说我以前的专场有生命力，那这个专场有的，是黑色生命力。</p>
+                  <p>前些天给自己的入行四周年纪念写过一段话，用在这里收尾吧：</p>
+                  <p>命运的齿轮转到今天，做了好多事，说了好多话。为过自己，也为过别人。<br>无法谈成功，因为所有选择都是在纷繁的周遭和扑朔的当下，所能做出的唯一选择。<br>无法谈失败，因为彻夜辗转无尽复盘的我，仍是我最好的师长。</p>
+                  <p>至于前路，无非是有时在高楼，有时一身锈。均能承受，均无怨尤。</p>
+                </div>
+              </article>
+            </div>
+          </div>
           <div class="poster-photo-sources" aria-hidden="true">
             <img src="./IMG_0757.JPG" alt=""><img src="./IMG_0758.JPG" alt=""><img src="./IMG_0759.JPG" alt=""><img src="./IMG_0760.JPG" alt=""><img src="./IMG_0761.JPG" alt=""><img src="./IMG_0762.JPG" alt=""><img src="./IMG_0763.JPG" alt=""><img src="./IMG_0764.JPG" alt=""><img src="./IMG_0765.JPG" alt=""><img src="./IMG_0766.JPG" alt=""><img src="./IMG_0767.JPG" alt=""><img src="./IMG_0768.JPG" alt=""><img src="./IMG_0769.JPG" alt=""><img src="./IMG_0770.JPG" alt=""><img src="./IMG_0771.JPG" alt=""><img src="./IMG_0772.JPG" alt=""><img src="./IMG_0773.JPG" alt=""><img src="./IMG_0774.JPG" alt=""><img src="./IMG_0775.JPG" alt=""><img src="./IMG_0776.JPG" alt=""><img src="./IMG_0777.JPG" alt="">
           </div>
@@ -2204,11 +2439,12 @@
       { id: 123, city: '滁州', date: '09.26', session: '晚场', venue: '天长文化艺术中心大剧院' },
       { id: 124, city: '常熟', date: '09.27', session: '晚场', venue: '常熟大剧院' },
       { id: 125, city: '南通', date: '09.30', session: '晚场', venue: '南通更俗大剧院' },
-      { id: 126, city: '苏州', date: '10', session: '待定', venue: '苏州狮山大剧院大剧场' },
-      { id: 127, city: '沈阳', date: '10.16', session: '晚场', venue: '辽宁中华剧场' },
-      { id: 128, city: '大连', date: '10.18', session: '晚场', venue: '大冷文化宫' },
-      { id: 129, city: '哈尔滨', date: '10.23', session: '晚场', venue: '哈尔滨国际会展体育中心环球剧场' },
-      { id: 130, city: '长春', date: '10.25', session: '晚场', venue: '长春国际会展中心' }
+      { id: 126, city: '扬州', date: '10.01', session: '晚场', venue: '扬州运河大剧院 歌剧厅' },
+      { id: 127, city: '苏州', date: '10', session: '待定', venue: '苏州狮山大剧院大剧场' },
+      { id: 128, city: '沈阳', date: '10.16', session: '晚场', venue: '辽宁中华剧场' },
+      { id: 129, city: '大连', date: '10.18', session: '晚场', venue: '大冷文化宫' },
+      { id: 130, city: '哈尔滨', date: '10.23', session: '晚场', venue: '哈尔滨国际会展体育中心环球剧场' },
+      { id: 131, city: '长春', date: '10.25', session: '晚场', venue: '长春国际会展中心' }
     ];
 
     const today = new Date();
@@ -2226,7 +2462,7 @@
       '张家港':'ZHANGJIAGANG','绍兴':'SHAOXING','东莞':'DONGGUAN','江门':'JIANGMEN',
       '青岛':'QINGDAO','洛阳':'LUOYANG','郑州':'ZHENGZHOU','慈溪':'CIXI','丽水':'LISHUI',
       '靖江':'JINGJIANG','西安':'XIAN','南昌':'NANCHANG','长沙':'CHANGSHA',
-      '福州':'FUZHOU','温州':'WENZHOU','合肥':'HEFEI','滁州':'CHUZHOU','厦门':'XIAMEN','常熟':'CHANGSHU','沈阳':'SHENYANG','大连':'DALIAN','哈尔滨':'HARBIN','长春':'CHANGCHUN'
+      '福州':'FUZHOU','温州':'WENZHOU','合肥':'HEFEI','滁州':'CHUZHOU','厦门':'XIAMEN','常熟':'CHANGSHU','扬州':'YANGZHOU','沈阳':'SHENYANG','大连':'DALIAN','哈尔滨':'HARBIN','长春':'CHANGCHUN'
     };
     tours.forEach((tour, index) => {
       tour.id = index + 1;
@@ -2258,7 +2494,8 @@
           { start: '07.03', end: '07.05', host: '虎牙' },
           { start: '07.10', end: '07.11', host: '笑笑' },
           { start: '07.17', end: '07.19', host: '赖铭佳' },
-          { start: '08.01', end: '08.02', host: '笑笑' }
+          { start: '08.01', end: '08.02', host: '笑笑' },
+          { start: '10.01', end: '10.01', host: '笑笑' }
         ];
         const matched = hostRanges.find(range => tour.date >= range.start && tour.date <= range.end);
         tour.host = matched ? matched.host : '小红';
@@ -2429,6 +2666,46 @@
       });
     }
 
+    // EAN-13 真实条形码生成器
+    function generateEAN13Barcode(seedId) {
+      const L = ['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
+      const G = ['0100111','0110011','0011011','0100001','0011101','0111001','0000101','0010001','0001001','0010111'];
+      const R = ['1110010','1100110','1101100','1000010','1011100','1001110','1010000','1000100','1001000','1110100'];
+      const parity = ['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
+
+      let seed = seedId;
+      let code = '';
+      for (let i = 0; i < 12; i++) {
+        seed = (seed * 9301 + 49297) % 233280;
+        code += String(Math.floor((seed / 233280) * 10));
+      }
+
+      let sum = 0;
+      for (let i = 0; i < 12; i++) {
+        const digit = parseInt(code[i], 10);
+        sum += (i % 2 === 0) ? digit : digit * 3;
+      }
+      const checksum = (10 - (sum % 10)) % 10;
+      const fullCode = code + checksum;
+
+      const firstDigit = parseInt(fullCode[0], 10);
+      const leftParity = parity[firstDigit];
+      let modules = '101';
+      for (let i = 1; i <= 6; i++) {
+        const digit = parseInt(fullCode[i], 10);
+        modules += leftParity[i - 1] === 'L' ? L[digit] : G[digit];
+      }
+      modules += '01010';
+      for (let i = 7; i <= 12; i++) {
+        const digit = parseInt(fullCode[i], 10);
+        modules += R[digit];
+      }
+      modules += '101';
+
+      const bars = modules.split('').map(bit => `<span style="${bit === '1' ? '' : 'background:transparent;border-left:0;'}"></span>`);
+      return { bars, code: fullCode };
+    }
+
     // 票根弹窗 - 票根艺术设计
     let ticketReturnFocus;
     function openTicketModal(tour) {
@@ -2437,14 +2714,8 @@
       const [month, day] = tour.date.split('.');
       const isUpcoming = tour.status === 'upcoming';
       const isAfternoon = tour.session && tour.session.includes('午');
-      // 生成条形码（伪）
-      const bars = [];
-      const seed = tour.id;
-      for (let i = 0; i < 36; i++) {
-        const w = ((seed * (i + 3)) % 3) + 1; // 1-3px
-        const opaque = (seed + i) % 7 !== 0; // 偶有空白
-        bars.push(`<span style="width:${w}px;${opaque ? '' : 'background:transparent;border-left:0;'}"></span>`);
-      }
+      // 生成 EAN-13 条形码
+      const { bars, code: barcodeCode } = generateEAN13Barcode(tour.id);
       const html = `
         <div class="modal-ticket-wrap">
           <button class="modal-close ticket-close" aria-label="关闭票根">×</button>
@@ -2513,6 +2784,7 @@
               </div>
               <div class="modal-stub-city">${tour.city}</div>
               <div class="modal-stub-barcode">${bars.join('')}</div>
+              <div class="modal-stub-barcode-num">${barcodeCode}</div>
               <div class="modal-stub-no">NO.${id}</div>
               <div class="modal-stub-foot">${tour.fullDate}<br>${tour.session} · ADMIT ONE</div>
             </div>
@@ -2572,7 +2844,7 @@
       render();
     });
     const cityCoordinates = {
-      苏州: [57, 38], 上海: [71, 52], 南京: [62, 43], 常州: [60, 46], 无锡: [63, 48], 淄博: [64, 26], 北京: [60, 16], 天津: [65, 21], 杭州: [68, 58], 武汉: [48, 53], 深圳: [64, 82], 佛山: [55, 78], 珠海: [53, 84], 广州: [57, 79], 贵阳: [39, 69], 重庆: [37, 60], 成都: [30, 61], 济南: [63, 31], 南通: [70, 43], 宁波: [75, 57], 石家庄: [54, 26], 太原: [48, 25], 嘉兴: [70, 54], 太仓: [68, 48], 张家港: [64, 43], 绍兴: [71, 60], 东莞: [61, 82], 江门: [54, 84], 青岛: [75, 27], 洛阳: [47, 37], 郑州: [51, 39], 慈溪: [73, 57], 丽水: [69, 68], 靖江: [66, 45], 西安: [38, 39], 南昌: [55, 65], 长沙: [49, 67], 福州: [75, 74], 温州: [73, 67], 合肥: [56, 46], 滁州: [64, 39], 厦门: [71, 77], 常熟: [61, 43], 沈阳: [78, 15], 大连: [75, 18], 哈尔滨: [84, 8], 长春: [81, 11]
+      苏州: [57, 38], 上海: [71, 52], 南京: [62, 43], 常州: [60, 46], 无锡: [63, 48], 淄博: [64, 26], 北京: [60, 16], 天津: [65, 21], 杭州: [68, 58], 武汉: [48, 53], 深圳: [64, 82], 佛山: [55, 78], 珠海: [53, 84], 广州: [57, 79], 贵阳: [39, 69], 重庆: [37, 60], 成都: [30, 61], 济南: [63, 31], 南通: [70, 43], 宁波: [75, 57], 石家庄: [54, 26], 太原: [48, 25], 嘉兴: [70, 54], 太仓: [68, 48], 张家港: [64, 43], 绍兴: [71, 60], 东莞: [61, 82], 江门: [54, 84], 青岛: [75, 27], 洛阳: [47, 37], 郑州: [51, 39], 慈溪: [73, 57], 丽水: [69, 68], 靖江: [66, 45], 西安: [38, 39], 南昌: [55, 65], 长沙: [49, 67], 福州: [75, 74], 温州: [73, 67], 合肥: [56, 46], 滁州: [64, 39], 厦门: [71, 77], 常熟: [61, 43], 扬州: [63, 45], 沈阳: [78, 15], 大连: [75, 18], 哈尔滨: [84, 8], 长春: [81, 11]
     };
     const mapPoints = document.querySelector('#map-points');
     const routeLines = document.querySelector('#route-lines');
@@ -2620,7 +2892,7 @@
           return statusOrder || a.id - b.id;
         });
       modalTitle.textContent = venue || city;
-      modalList.innerHTML = cityTours.map(tour => `<div class="modal-show"><span class="modal-show-date">${tour.date} / 2026</span><span class="modal-show-session">${tour.session}</span><span class="modal-show-status ${tour.status}">${tour.statusText}</span></div>`).join('');
+      modalList.innerHTML = cityTours.map(tour => `<div class="modal-show"><span class="modal-show-date">${tour.date} / 2026</span><span class="modal-show-session">${tour.session}</span><span class="modal-show-venue" title="${tour.venue}">${tour.venue}</span><span class="modal-show-status ${tour.status}">${tour.statusText}</span></div>`).join('');
       mapModal.classList.add('visible');
     }
 
@@ -3217,7 +3489,7 @@
     initTextEffects();
 
     const amapCoordinates = {
-      苏州: [120.5853, 31.2989], 上海: [121.4737, 31.2304], 南京: [118.7969, 32.0603], 常州: [119.9741, 31.8112], 无锡: [120.3119, 31.4912], 淄博: [118.0549, 36.8135], 北京: [116.4074, 39.9042], 天津: [117.2009, 39.0842], 杭州: [120.1551, 30.2741], 武汉: [114.3054, 30.5931], 深圳: [114.0579, 22.5431], 佛山: [113.1227, 23.0288], 珠海: [113.5767, 22.2707], 广州: [113.2644, 23.1291], 贵阳: [106.6302, 26.6477], 重庆: [106.5516, 29.5630], 成都: [104.0665, 30.5723], 济南: [117.1201, 36.6512], 南通: [120.8943, 31.9802], 宁波: [121.5440, 29.8683], 石家庄: [114.5149, 38.0428], 太原: [112.5489, 37.8706], 嘉兴: [120.7555, 30.7461], 太仓: [121.1306, 31.4577], 张家港: [120.5555, 31.8757], 绍兴: [120.5821, 30.0515], 东莞: [113.7518, 23.0207], 江门: [113.0815, 22.5787], 青岛: [120.3826, 36.0671], 洛阳: [112.4540, 34.6197], 郑州: [113.6254, 34.7466], 慈溪: [121.2481, 30.1771], 丽水: [119.9228, 28.4676], 靖江: [120.2771, 31.9827], 西安: [108.9398, 34.3416], 南昌: [115.8579, 28.6829], 长沙: [112.9388, 28.2282], 福州: [119.2965, 26.0745], 温州: [120.6994, 27.9943], 合肥: [117.2272, 31.8206], 滁州: [118.9987, 32.6676], 厦门: [118.0894, 24.4798], 常熟: [120.7524, 31.6536], 沈阳: [123.4315, 41.8057], 大连: [121.5940, 38.9520], 哈尔滨: [126.6424, 45.7569], 长春: [125.3235, 43.8171]
+      苏州: [120.5853, 31.2989], 上海: [121.4737, 31.2304], 南京: [118.7969, 32.0603], 常州: [119.9741, 31.8112], 无锡: [120.3119, 31.4912], 淄博: [118.0549, 36.8135], 北京: [116.4074, 39.9042], 天津: [117.2009, 39.0842], 杭州: [120.1551, 30.2741], 武汉: [114.3054, 30.5931], 深圳: [114.0579, 22.5431], 佛山: [113.1227, 23.0288], 珠海: [113.5767, 22.2707], 广州: [113.2644, 23.1291], 贵阳: [106.6302, 26.6477], 重庆: [106.5516, 29.5630], 成都: [104.0665, 30.5723], 济南: [117.1201, 36.6512], 南通: [120.8943, 31.9802], 宁波: [121.5440, 29.8683], 石家庄: [114.5149, 38.0428], 太原: [112.5489, 37.8706], 嘉兴: [120.7555, 30.7461], 太仓: [121.1306, 31.4577], 张家港: [120.5555, 31.8757], 绍兴: [120.5821, 30.0515], 东莞: [113.7518, 23.0207], 江门: [113.0815, 22.5787], 青岛: [120.3826, 36.0671], 洛阳: [112.4540, 34.6197], 郑州: [113.6254, 34.7466], 慈溪: [121.2481, 30.1771], 丽水: [119.9228, 28.4676], 靖江: [120.2771, 31.9827], 西安: [108.9398, 34.3416], 南昌: [115.8579, 28.6829], 长沙: [112.9388, 28.2282], 福州: [119.2965, 26.0745], 温州: [120.6994, 27.9943], 合肥: [117.2272, 31.8206], 滁州: [118.9987, 32.6676], 厦门: [118.0894, 24.4798], 常熟: [120.7524, 31.6536], 扬州: [119.3735, 32.3935], 沈阳: [123.4315, 41.8057], 大连: [121.5940, 38.9520], 哈尔滨: [126.6424, 45.7569], 长春: [125.3235, 43.8171]
     };
 
     function calculateTourDistance() {
@@ -3313,7 +3585,8 @@
       '上海|上海宛平剧院': [121.451169, 31.185071],
       '长沙|湖南大剧院大剧场': [112.997683, 28.189723],
       '滁州|天长文化艺术中心大剧院': [119.006231, 32.658656],
-      '长春|长春国际会展中心': [125.394548, 43.838617]
+      '长春|长春国际会展中心': [125.394548, 43.838617],
+      '扬州|扬州运河大剧院 歌剧厅': [119.3735, 32.3935]
     }));
     const journeyButton = document.querySelector('#candy-journey');
     const journeyActions = document.querySelector('#journey-actions');
@@ -3615,6 +3888,62 @@
     journeyButton.addEventListener('click', playCandyJourney);
     pauseJourneyButton.addEventListener('click', toggleJourneyPause);
     cancelJourneyButton.addEventListener('click', clearJourney);
+  </script>
+  <script>
+    (() => {
+      const envelope = document.querySelector('.poster-envelope[role="button"]');
+      const overlay = document.getElementById('letter-overlay');
+      const closeButton = overlay?.querySelector('.letter-close');
+      const sheet = overlay?.querySelector('.letter-sheet-wrap');
+      if (!envelope || !overlay || !closeButton || !sheet) return;
+
+      document.body.appendChild(overlay);
+      let lastFocused = null;
+
+      const openLetter = () => {
+        lastFocused = document.activeElement;
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('letter-open');
+        requestAnimationFrame(() => overlay.classList.add('is-open'));
+        closeButton.focus({ preventScroll: true });
+      };
+
+      const closeLetter = () => {
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('letter-open');
+        lastFocused?.focus?.({ preventScroll: true });
+      };
+
+      envelope.addEventListener('click', openLetter);
+      envelope.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openLetter();
+        }
+      });
+      closeButton.addEventListener('click', closeLetter);
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) closeLetter();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && overlay.classList.contains('is-open')) closeLetter();
+      });
+
+      // Scroll inside the letter only
+      overlay.addEventListener('wheel', (event) => {
+        event.stopPropagation();
+        const maxScroll = overlay.scrollHeight - overlay.clientHeight;
+        const atTop = overlay.scrollTop <= 0;
+        const atBottom = overlay.scrollTop >= maxScroll;
+        if ((event.deltaY < 0 && atTop) || (event.deltaY > 0 && atBottom)) {
+          event.preventDefault();
+        }
+      }, { passive: false });
+      overlay.addEventListener('touchmove', (event) => {
+        event.stopPropagation();
+      }, { passive: false });
+    })();
   </script>
 </body>
 </html>

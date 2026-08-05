@@ -40,3 +40,8 @@ __test_open.png
 # Tencent Cloud EdgeOne
 .edgeone/
 .tef_dist/
+
+# Debug / temp
+.dbg/
+.pai/
+wxapp/
